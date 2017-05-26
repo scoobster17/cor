@@ -1,0 +1,27 @@
+{
+  "name": "cor",
+  "version": "1.0.0",
+  "description": "Cor scorekeeper, track any scores you like, whether it's your favourite team or pool against your friends",
+  "main": "server/config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scoobster17/cor.git"
+  },
+  "keywords": [
+    "Cor",
+    "score",
+    "scorekeeper"
+  ],
+  "author": "Phil Gibbins <scoobster17@hotmail.co.uk> (http://www.philgibbins.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scoobster17/cor/issues"
+  },
+  "homepage": "https://github.com/scoobster17/cor#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
