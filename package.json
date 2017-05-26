@@ -7,7 +7,8 @@
     "build": "node_modules/.bin/webpack --config webpack.config.js",
     "start": "node dist/server/cor-server.js",
     "start:dev": "node_modules/.bin/nodemon dist/server/cor-server.js --watch ./dist",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "node_modules/.bin/webpack --config webpack.config.js --watch"
   },
   "repository": {
     "type": "git",
