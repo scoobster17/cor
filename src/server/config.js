@@ -4,6 +4,7 @@
 
 /* DEPENDENCIES */
 
+const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
@@ -15,11 +16,11 @@ const socketio = require('socket.io');
 const app = express();
 
 // express setup
-app.use( express.static(__dirname + "/../app") );
+app.use( express.static(__dirname + '/../../dist/app'));
 
-/*app.get('/', function(req, res) {
-
-});*/
+app.get('/', function(req, res) {
+	res.sendFile( path.resolve('src', 'app', 'index.html') );
+});
 
 // http server setup
 const server = http.Server(app);
@@ -36,7 +37,7 @@ server.listen(6077, () => {
     const host = server.address().address;
     const port = server.address().port;
 
-    console.log("Cor scorekeeper app listening @ http://%s:%s", host, port);
+    console.log('Cor scorekeeper app listening @ http://%s:%s', host, port);
 
 });
 

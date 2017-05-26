@@ -6,3 +6,6 @@ dist/
 
 # project files
 *.sublime*
+
+# log files
+*.log
