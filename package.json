@@ -4,6 +4,7 @@
   "description": "Cor scorekeeper, track any scores you like, whether it's your favourite team or pool against your friends",
   "main": "server/config.js",
   "scripts": {
+    "start": "node server/config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/scoobster17/cor#readme",
   "dependencies": {
-    "express": "^4.15.3"
+    "express": "^4.15.3",
+    "socket.io": "^2.0.1"
   }
 }
