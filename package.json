@@ -4,7 +4,9 @@
   "description": "Cor scorekeeper, track any scores you like, whether it's your favourite team or pool against your friends",
   "main": "server/config.js",
   "scripts": {
-    "start": "node server/config.js",
+    "build": "node_modules/.bin/webpack --config webpack.config.js",
+    "start": "node dist/server/cor-server.js",
+    "start:dev": "node_modules/.bin/nodemon dist/server/cor-server.js --watch ./dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,7 +25,20 @@
   },
   "homepage": "https://github.com/scoobster17/cor#readme",
   "dependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-env": "^1.5.1",
+    "babel-preset-react": "^6.24.1",
+    "ejs": "^2.5.6",
     "express": "^4.15.3",
-    "socket.io": "^2.0.1"
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-router": "^4.1.1",
+    "socket.io": "^2.0.1",
+    "webpack": "^2.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }
