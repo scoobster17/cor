@@ -1,5 +1,12 @@
-const x = () => {
-	console.log('hello world');
-}
+// react dependencies
+import React from 'react';
+import ReactDOM from 'react-dom';
+import RoutesClientWrapper from './config/routes-client-wrapper';
 
-x();
+window.onload = () => {
+    console.log('firing onload');
+    ReactDOM.render(
+        <RoutesClientWrapper />,
+        document.getElementById('container')
+    );
+};
