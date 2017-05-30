@@ -1,6 +1,8 @@
 const webpack = require('webpack');
 const path = require('path');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const fs = require('fs');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 let nodeModules = {};
 fs.readdirSync('node_modules')
@@ -8,6 +10,43 @@ fs.readdirSync('node_modules')
     .forEach(mod => { nodeModules[mod] = 'commonjs ' + mod });
 
 module.exports = [
+
+    // Client CSS
+    {
+        devtool: 'source-map',
+        entry: {
+            'small-screens' : path.join(__dirname, 'src', 'app', 'css', 'small-screens', 'small-screens.scss'),
+            'large-screens' : path.join(__dirname, 'src', 'app', 'css', 'large-screens', 'large-screens.scss')
+        },
+        output: {
+            path: path.join(__dirname, 'dist', 'app', 'css'),
+            filename: '[name].css'
+        },
+        module: {
+            loaders: [
+                {
+                    test: /\.scss$/,
+                    loader: ExtractTextPlugin.extract("css-loader!sass-loader")
+                },
+                {
+                    test: /\.(eot|svg|ttf|woff|woff2)/,
+                    loader: 'file-loader?name=../fonts/[name].[ext]'
+                }
+            ]
+        },
+        plugins: [
+            new webpack.DefinePlugin({
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+            }),
+            new ExtractTextPlugin({
+                allChunks: true,
+                filename: '../css/[name].css'
+            }),
+            new CopyWebpackPlugin([
+                {from: __dirname + '/src/app/img', to: '../img'}
+            ])
+        ]
+    },
 
     // Client JavaScript
     {

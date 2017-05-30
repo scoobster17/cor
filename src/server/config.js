@@ -16,7 +16,7 @@ const socketio = require('socket.io');
 const app = express();
 
 // express setup
-app.use( express.static(__dirname + '/../../dist/app'));
+app.use( express.static(__dirname + '/../../dist/app/'));
 
 app.get('/', function(req, res) {
 	res.sendFile( path.resolve('src/app/index.html') );

@@ -1,0 +1,21 @@
+// charset
+@charset "UTF-8";
+
+// utilities
+@import "../utils/_sass-setup";
+
+// reset
+@import "~reset-css/_reset"; // ~ tells webpack to look in node_modules/
+
+// configuration
+@import "../config/_fonts";
+// @import "../config/_icons";
+
+// global
+@import "global/_common";
+
+// components
+@import "components/global/_header";
+
+// pages
+@import "pages/_home";

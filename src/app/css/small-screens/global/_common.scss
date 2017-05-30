@@ -1,0 +1,32 @@
+// Base styles
+html {
+	font-size: 62.5%; // rem basis
+}
+body {
+	background: $primaryBackgroundColour;
+	color: $primaryTextColour;
+	font-family: $primaryFontStack;
+}
+h1 {
+	font-family: $headingFontStack;
+	@include font-size(3);
+}
+h2 {
+	font-family: $headingFontStack;
+}
+h3 {
+	font-family: $headingFontStack;
+}
+p {
+	@include font-size(1.6);
+	margin: 0 0 10px;
+}
+a {
+	color: inherit;
+	text-decoration: underline;
+	&:hover,
+	&:focus,
+	&:active {
+		text-decoration: none;
+	}
+}

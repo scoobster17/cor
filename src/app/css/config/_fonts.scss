@@ -1,0 +1,23 @@
+// body font
+@font-face {
+  font-family: 'octin college';
+  src: url('../../fonts/octin_college/octin_college_rg.eot?65842752');
+  src: url('../../fonts/octin_college/octin_college_rg.eot?65842752#iefix') format('embedded-opentype'),
+       url('../../fonts/octin_college/octin_college_rg.woff?65842752') format('woff'),
+       url('../../fonts/octin_college/octin_college_rg.ttf?65842752') format('truetype'),
+       url('../../fonts/octin_college/octin_college_rg.svg?65842752#fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+// heading font
+@font-face {
+  font-family: 'sf sports night';
+  src:url('../../fonts/sf_sports_night/sf-sports-night.regular.eot?tn9luy');
+  src:url('../../fonts/sf_sports_night/sf-sports-night.regular.eot?tn9luy#iefix') format('embedded-opentype'),
+    url('../../fonts/sf_sports_night/sf-sports-night.regular.ttf?tn9luy') format('truetype'),
+    url('../../fonts/sf_sports_night/sf-sports-night.regular.woff?tn9luy') format('woff'),
+    url('../../fonts/sf_sports_night/sf-sports-night.regular.svg?tn9luy#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
