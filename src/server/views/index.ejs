@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Home | Cor scorekeeper app</title>
+    <link rel="stylesheet" type="text/css" href="/css/small-screens.css">
+    <link rel="stylesheet" type="text/css" href="/css/large-screens.css" media="(min-width: 768px) and (min-device-width: 768px)">
+</head>
+<body>
+    <div id="container" class="container">
+        <%- markup -%>
+    </div>
+    <script src="socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://localhost:6077');
+        socket.on('news', function(data) {
+            console.log(data);
+            socket.emit('my other event', { my: 'data' });
+        });
+    </script>
+    <script type="text/javascript" src="/js/bundle.js"></script>
+</body>
+</html>

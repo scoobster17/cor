@@ -4,29 +4,81 @@
 
 /* DEPENDENCIES */
 
-const path = require('path');
-const http = require('http');
-const express = require('express');
+// server dependencies
+import path from 'path';
+import { Server } from 'http';
+import Express from 'express';
 const socketio = require('socket.io');
+
+// react dependencies
+import React from 'react';
+import { renderToString } from 'react-dom/server';
+import { match, RouterContext } from 'react-router';
+
+// app dependencies
+import routes from '../app/js/config/routes';
+import NotFoundPage from '../app/js/components/pages/404';
 
 /* ************************************************************************** */
 
 /* APP SETUP */
 
-const app = express();
+const app = Express();
 
 // express setup
-app.use( express.static(__dirname + '/../../dist/app/'));
+app.use( Express.static(__dirname + '/../../dist/app/'));
 
-app.get('/', function(req, res) {
-	res.sendFile( path.resolve('src/app/index.html') );
-});
 
 // http server setup
-const server = http.Server(app);
+const server = Server(app);
 
 // socket.io setup
 const io = socketio(server);
+
+// ejs setup
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// routes
+app.get('*', (req, res) => {
+
+    // prevent clickjacking by adding HTTP Header for X-FRAME-OPTIONS
+    // res.get('X-Frame-Options') // === 'Deny'
+
+    match(
+        { routes, location: req.url },
+        (err, redirectLocation, renderProps) => {
+
+            // show error if one present
+            if (err) {
+                console.log('');
+                console.log('');
+                console.log('**500 ERROR**');
+                console.log('');
+                console.log('Request URL: ' + req.url);
+                return res.status(500).send(err.message);
+            }
+
+            // propogate redirect to browser if one present
+            if (redirectLocation) {
+                return res.redirect(302, redirectLocation.pathname + redirectLocation.search);
+            }
+
+            // generate markup for the current route
+            let markup;
+            if (renderProps) {
+                markup = renderToString(<RouterContext {...renderProps} />);
+            } else {
+                markup = renderToString(<NotFoundPage />);
+                res.status(404);
+            }
+
+            // render the index template with the embedded React markup
+            return res.render('index', { markup });
+
+        }
+    );
+});
 
 /* ************************************************************************** */
 

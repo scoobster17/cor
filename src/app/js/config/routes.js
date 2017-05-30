@@ -7,11 +7,14 @@ import { Route, IndexRoute } from 'react-router';
 import Layout from './layout';
 import HomePage from '../components/pages/home';
 import LoginPage from '../components/pages/login';
+import NotFoundPage from '../components/pages/404';
 
 const routes = (
     <Route path="/" component={ Layout }>
         <IndexRoute component={ HomePage } />
         <Route path="login" component={ LoginPage } />
+        <Route path="404" component={ NotFoundPage } />
+        <Route path="*" component={ NotFoundPage } />
     </Route>
 )
 
