@@ -6,8 +6,8 @@ class HomePage extends React.Component {
     render() {
         return (
             <main>
-                <h1>Page Heading</h1>
-                <p>Page content</p>
+                <h1>Cor blimey, is that the score?!</h1>
+                <p>Cor is a scorekeeper app.</p>
             </main>
         )
     }

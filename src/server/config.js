@@ -8,7 +8,15 @@
 import path from 'path';
 import { Server } from 'http';
 import Express from 'express';
+const bodyParser = require('body-parser');
 const socketio = require('socket.io');
+
+// database dependencies
+const mongo = require('./database/config.js');
+mongo.connect();
+
+// data dependencies
+const uuid = require('uuid/v4');
 
 // react dependencies
 import React from 'react';
@@ -27,7 +35,8 @@ const app = Express();
 
 // express setup
 app.use( Express.static(__dirname + '/../../dist/app/'));
-
+app.use( bodyParser.urlencoded({ extended: false }) );
+app.use( bodyParser.json() );
 
 // http server setup
 const server = Server(app);
@@ -78,6 +87,41 @@ app.get('*', (req, res) => {
 
         }
     );
+});
+
+app.post('/data/users/add', (req, res) => {
+
+    // get the users from the database and
+    const users = mongo.users();
+    const userData = req.body;
+
+    // check if the user exists, and return if so
+    users.find({ "email": req.body.email }).toArray((err, doc) => {
+
+        if (err) res.status(500); // 500?
+
+        if (doc.length) {
+
+            res.status(403).send({
+                "message": "Email address already in use"  // needs to be email or password is incorrect for security
+            });
+
+        } else {
+
+            // assign a random id to user and store to database
+            userData.id = uuid();
+            users.save(userData, (err, saved) => {
+
+                if (err || !saved) res.status(500);
+
+                res.status(200);
+
+            });
+
+        }
+
+    });
+
 });
 
 /* ************************************************************************** */

@@ -25,6 +25,16 @@ class GlobalHeader extends React.Component {
                                 Log in
                             </Link>
                         </li>
+                        <li>
+                            <Link to="/register">
+                                Register
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/scores">
+                                My scores
+                            </Link>
+                        </li>
                     </ul>
                 </nav>
             </header>
