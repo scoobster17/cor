@@ -44,6 +44,9 @@ module.exports = [
             }),
             new CopyWebpackPlugin([
                 {from: __dirname + '/src/app/img', to: '../img'}
+            ]),
+            new CopyWebpackPlugin([
+                {from: __dirname + '/src/app/favicon.ico', to: '../'}
             ])
         ]
     },
