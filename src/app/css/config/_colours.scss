@@ -4,7 +4,9 @@ $black:                     #000000;
 
 // Chosen Colours
 $primaryColour:             $black;
+$secondaryColour:           #ccc; // to be revised
 $primaryBackgroundColour:   $white;
+$secondaryBackgroundColour: #ccc;
 
 // Brand Colours
 $facebookColour:            #3B5998;
@@ -13,5 +15,5 @@ $pinterestColour:           #C92228;
 
 // Text colours
 $primaryTextColour:         $primaryColour;
-$secondaryTextColour:       #ccc; // to be revised
-$tertiaryTextColour:        $white;
+$secondaryTextColour:       $white;
+$tertiaryTextColour:        red; // to be revised

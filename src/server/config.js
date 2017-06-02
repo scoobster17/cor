@@ -159,6 +159,24 @@ app.post('/data/scores/add', (req, res) => {
 
 });
 
+app.post('/data/scores/get', (req, res) => {
+
+    // get the scores from the database
+    const scores = mongo.scores();
+    const scoreData = req.body;
+
+    // check if the user exists, and return if so
+    scores.find({ "creator": scoreData.id }).toArray((err, doc) => {
+
+        if (err) res.status(500); // 500?
+
+        if (doc.length) {
+            res.status(200).send(doc);
+        }
+
+    });
+});
+
 /* ************************************************************************** */
 
 /* SERVER */
