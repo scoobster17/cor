@@ -72,6 +72,8 @@ class AddTrackerPage extends React.Component {
                 formDataObj[inputs[i].name] = inputs[i].value;
             }
 
+            formDataObj["urlText"] = formDataObj.name.toLowerCase().replace(/ /g, '-');
+
             // send data via AJAX
             request.send(JSON.stringify(formDataObj));
             return false;

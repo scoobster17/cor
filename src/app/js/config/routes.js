@@ -19,7 +19,7 @@ const routes = (
         <Route path="login" component={ LoginPage } />
         <Route path="register" component={ RegisterPage } />
         <Route path="scores" component={ ListPage } />
-        <Route path="scores/:id" component={ DetailsPage } />
+        <Route path="scores/:urlText" component={ DetailsPage } />
         <Route path="add-tracker" component={ AddTrackerPage } />
         <Route path="404" component={ NotFoundPage } />
         <Route path="*" component={ NotFoundPage } />

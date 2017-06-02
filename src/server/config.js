@@ -165,16 +165,26 @@ app.post('/data/scores/get', (req, res) => {
     const scores = mongo.scores();
     const scoreData = req.body;
 
-    // check if the user exists, and return if so
-    scores.find({ "creator": scoreData.id }).toArray((err, doc) => {
-
-        if (err) res.status(500); // 500?
-
-        if (doc.length) {
-            res.status(200).send(doc);
-        }
-
-    });
+    if (scoreData.urlText) {
+        scores.find({
+            "creator": scoreData.id,
+            "urlText": scoreData.urlText
+        }).toArray((err, doc) => {
+            if (err) res.status(500); // 500?
+            if (doc.length) {
+                res.status(200).send(doc[0]);
+            }
+        });
+    } else {
+        scores.find({
+            "creator": scoreData.id
+        }).toArray((err, doc) => {
+            if (err) res.status(500); // 500?
+            if (doc.length) {
+                res.status(200).send(doc);
+            }
+        });
+    }
 });
 
 /* ************************************************************************** */

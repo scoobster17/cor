@@ -5,10 +5,9 @@ import { Link } from 'react-router';
 class TrackerSummary extends React.Component {
     render() {
         const { tracker } = this.props;
-        const trackerUrlText = tracker.name.toLowerCase().replace(/ /g, '-');
         return (
             <li>
-                <Link to={`/scores/${trackerUrlText}`}>
+                <Link to={`/scores/${ tracker.urlText }`}>
                 <dl>
                     <dt>Name</dt>
                         <dd dangerouslySetInnerHTML={{ __html: tracker && tracker.name }}></dd>
