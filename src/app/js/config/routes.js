@@ -10,6 +10,7 @@ import LoginPage from '../components/pages/login';
 import RegisterPage from '../components/pages/register';
 import ListPage from '../components/pages/list';
 import DetailsPage from '../components/pages/details';
+import AddTrackerPage from '../components/pages/add-tracker';
 import NotFoundPage from '../components/pages/404';
 
 const routes = (
@@ -19,6 +20,7 @@ const routes = (
         <Route path="register" component={ RegisterPage } />
         <Route path="scores" component={ ListPage } />
         <Route path="scores/:id" component={ DetailsPage } />
+        <Route path="add-tracker" component={ AddTrackerPage } />
         <Route path="404" component={ NotFoundPage } />
         <Route path="*" component={ NotFoundPage } />
     </Route>

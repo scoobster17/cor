@@ -35,6 +35,11 @@ class GlobalHeader extends React.Component {
                                 My scores
                             </Link>
                         </li>
+                        <li>
+                            <Link to="/add-tracker">
+                                Add new scoresheet
+                            </Link>
+                        </li>
                     </ul>
                 </nav>
             </header>

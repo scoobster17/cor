@@ -124,6 +124,41 @@ app.post('/data/users/add', (req, res) => {
 
 });
 
+app.post('/data/scores/add', (req, res) => {
+
+    // get the scores from the database
+    const scores = mongo.scores();
+    const scoreData = req.body;
+
+    // check if the user exists, and return if so
+    scores.find({ "name": req.body.name }).toArray((err, doc) => {
+
+        if (err) res.status(500); // 500?
+
+        if (doc.length) {
+
+            res.status(403).send({
+                "message": "Score tracker name address already in use for this user"  // needs to be email or password is incorrect for security
+            });
+
+        } else {
+
+            // assign a random id to tracker and store to database
+            scoreData.id = uuid();
+            scores.save(scoreData, (err, saved) => {
+
+                if (err || !saved) res.status(500);
+
+                res.status(200);
+
+            });
+
+        }
+
+    });
+
+});
+
 /* ************************************************************************** */
 
 /* SERVER */
