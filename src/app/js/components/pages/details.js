@@ -2,6 +2,9 @@
 import React from 'react';
 import { Link } from 'react-router';
 
+// app dependencies
+import ChatMessageList from '../chat/message-list';
+
 class DetailsPage extends React.Component {
 
     constructor() {
@@ -15,26 +18,31 @@ class DetailsPage extends React.Component {
     render() {
         const { tracker } = this.state;
         return (
-            <main>
-                <h1>Phil vs Jon M (Pool)</h1>
-                <p>Here are the details of your scorekeeping.</p>
-                <dl>
-                    <dt>Name</dt>
-                        <dd dangerouslySetInnerHTML={{ __html: tracker && tracker.name }}></dd>
-                    <dt>Game / Activity</dt>
-                        <dd dangerouslySetInnerHTML={{ __html: tracker && tracker.activity }}></dd>
-                    <dt>Type</dt>
-                        <dd dangerouslySetInnerHTML={{ __html: tracker && tracker.type }}></dd>
-                    <dt>Number of players</dt>
-                        <dd>2</dd>
-                    <dt>Your wins</dt>
-                        <dd>7</dd>
-                    <dt>Your losses</dt>
-                        <dd>5</dd>
-                    <dt>Games drawn</dt>
-                        <dd>0</dd>
-                </dl>
-            </main>
+            <div>
+                <main>
+                    <h1>Phil vs Jon M (Pool)</h1>
+                    <p>Here are the details of your scorekeeping.</p>
+                    <dl>
+                        <dt>Name</dt>
+                            <dd dangerouslySetInnerHTML={{ __html: tracker && tracker.name }}></dd>
+                        <dt>Game / Activity</dt>
+                            <dd dangerouslySetInnerHTML={{ __html: tracker && tracker.activity }}></dd>
+                        <dt>Type</dt>
+                            <dd dangerouslySetInnerHTML={{ __html: tracker && tracker.type }}></dd>
+                        <dt>Number of players</dt>
+                            <dd>2</dd>
+                        <dt>Your wins</dt>
+                            <dd>7</dd>
+                        <dt>Your losses</dt>
+                            <dd>5</dd>
+                        <dt>Games drawn</dt>
+                            <dd>0</dd>
+                    </dl>
+                </main>
+                <aside>
+                    <ChatMessageList title="Chat with other members of this activity" />
+                </aside>
+            </div>
         )
     }
 
