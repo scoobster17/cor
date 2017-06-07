@@ -205,6 +205,7 @@ server.listen(6077, () => {
 /* SOCKET.IO EVENTS */
 
 io.on('connection', (socket) => {
-	socket.emit('news', { hello: 'world' });
-	socket.on('my other event', (data) => console.log(data));
+    console.log('a user connected');
+	socket.emit('receiving from server', { message: 'You have received this from the server, your connection is running' });
+	socket.on('sendMessage', (data) => console.log(data));
 });
