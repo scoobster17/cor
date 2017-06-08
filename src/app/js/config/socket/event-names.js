@@ -4,8 +4,14 @@ const EVENTS = {
         TEST: 'Connection Check'
     },
     CHAT: {
+        SAVED: 'Message Saved',
         SEND: 'Sending Chat Message',
         RECEIVED: 'Chat Message Received'
+    },
+    ERROR: {
+        CHAT: {
+            SEND: 'Error Sending Chat Message'
+        }
     }
 }
 

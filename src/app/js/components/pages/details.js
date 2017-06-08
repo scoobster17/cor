@@ -40,7 +40,7 @@ class DetailsPage extends React.Component {
                     </dl>
                 </main>
                 <aside>
-                    <ChatMessageList title="Chat with other members of this activity" />
+                    <ChatMessageList title="Chat with other members of this activity" tracker={ tracker } />
                 </aside>
             </div>
         )

@@ -13,6 +13,7 @@ class ChatMessageList extends React.Component {
     constructor() {
         super();
 
+        // bind methods
         this.sendMessage = this.sendMessage.bind(this);
     }
 
@@ -30,6 +31,7 @@ class ChatMessageList extends React.Component {
                 time: "Mon 13:42"
             }
         ];
+
         return (
             <section>
                 {
@@ -57,12 +59,29 @@ class ChatMessageList extends React.Component {
         )
     }
 
+    componentDidUpdate() {
+        socket.on(EVENTS.CHAT.SAVED, (data) => console.log(data) );
+        socket.on(EVENTS.ERROR.CHAT.SEND, (data) => console.log(data) );
+    }
+
     sendMessage(event) {
+
         event.preventDefault();
-        const message = event.target.querySelector('textarea').value;
-        socket.emit(EVENTS.CHAT.SEND, { message });
+
+        const { tracker } = this.props;
+
+        socket.emit(EVENTS.CHAT.SEND, {
+            chatId: tracker.id,
+            messageData: {
+                author: 'authorId',
+                text: event.target.querySelector('textarea').value,
+                time: new Date().getTime()
+            }
+        });
+
         return false;
     }
+
 }
 
 export default ChatMessageList;

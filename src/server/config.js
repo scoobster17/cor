@@ -147,12 +147,32 @@ app.post('/data/scores/add', (req, res) => {
         } else {
 
             // assign a random id to tracker and store to database
-            scoreData.id = uuid();
+            const trackerId = uuid();
+            scoreData.id = trackerId;
             scores.save(scoreData, (err, saved) => {
 
-                if (err || !saved) res.status(500);
+                if (err || !saved) res.status(500).send({
+                    "error": "Tracker not set up, please contact an administrator"
+                });
 
-                res.status(200);
+                // get the chats collection in the DB and define a chat template
+                const chats = mongo.chats();
+                const chatTemplate = {
+                    id: trackerId,
+                    messages: [
+                        {
+                            text: 'Hi there! Your chat is all set up. Send your own message to contribute below :)'
+                        }
+                    ]
+                }
+
+                // create a chat for this event with the same ID as the tracker
+                chats.save(chatTemplate, (err, saved) => {
+                    if (err || !saved) res.status(500).send({
+                        "error": "Chat not set up, please contact an administrator"
+                    });
+                    res.status(200);
+                });
 
             });
 
@@ -209,6 +229,29 @@ server.listen(6077, () => {
 
 io.on('connection', (socket) => {
     console.log('a user connected');
+
+    // demonstrate to the user that there is a successful connection
 	socket.emit(EVENTS.CONNECTION.TEST, { message: 'You have received this from the server, your connection is running' });
-	socket.on(EVENTS.CHAT.SEND, (data) => console.log(data));
+
+    // bind server functionality to socket events
+	socket.on(EVENTS.CHAT.SEND, storeChatMessage);
 });
+
+const storeChatMessage = (data) => {
+
+    const chats = mongo.chats();
+
+    // update the chat with a new message
+    chats.update({ id: data.chatId }, { $push: { messages: data.messageData } }, (err, saved) => {
+
+        if (err || !saved) io.emit(EVENTS.ERROR.CHAT.SEND, {
+            message: "Message not saved to database"
+        });
+
+        io.emit(EVENTS.CHAT.SAVED, {
+            message: "Message saved to database"
+        });
+
+    });
+};
+
