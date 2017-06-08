@@ -13,24 +13,17 @@ class ChatMessageList extends React.Component {
     constructor() {
         super();
 
+        this.state = {
+            messages: []
+        };
+
         // bind methods
         this.sendMessage = this.sendMessage.bind(this);
     }
 
     render() {
         const { title } = this.props;
-        const messages = [
-            {
-                text: "Hi there!",
-                author: "Phil",
-                time: "Mon 13:41"
-            },
-            {
-                text: "Hi there back!",
-                author: "Friend1",
-                time: "Mon 13:42"
-            }
-        ];
+        const { messages } = this.state;
 
         return (
             <section>
@@ -59,9 +52,13 @@ class ChatMessageList extends React.Component {
         )
     }
 
-    componentDidUpdate() {
-        socket.on(EVENTS.CHAT.SAVED, (data) => console.log(data) );
+    componentWillReceiveProps() {
+
+        socket.on(EVENTS.SUCCESS.CHAT.SEND, this.updateMessages.bind(this) );
         socket.on(EVENTS.ERROR.CHAT.SEND, (data) => console.log(data) );
+
+        socket.on(EVENTS.SUCCESS.CHAT.FETCH, this.updateMessages.bind(this) );
+
     }
 
     sendMessage(event) {
@@ -69,17 +66,30 @@ class ChatMessageList extends React.Component {
         event.preventDefault();
 
         const { tracker } = this.props;
+        const form = event.target;
 
         socket.emit(EVENTS.CHAT.SEND, {
             chatId: tracker.id,
             messageData: {
                 author: 'authorId',
-                text: event.target.querySelector('textarea').value,
+                text: form.querySelector('textarea').value,
                 time: new Date().getTime()
             }
         });
 
+        form.reset();
+
         return false;
+    }
+
+    updateMessages( data ) {
+
+        const { messages } = this.state;
+
+        this.setState({
+            messages: [ ...messages, data.messageData ]
+        });
+        // emit to other users that another message has been saved
     }
 
 }

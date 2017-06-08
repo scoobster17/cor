@@ -234,7 +234,8 @@ io.on('connection', (socket) => {
 	socket.emit(EVENTS.CONNECTION.TEST, { message: 'You have received this from the server, your connection is running' });
 
     // bind server functionality to socket events
-	socket.on(EVENTS.CHAT.SEND, storeChatMessage);
+    socket.on(EVENTS.CHAT.SEND, storeChatMessage);
+	socket.on(EVENTS.CHAT.FETCH, getChatMessages);
 });
 
 const storeChatMessage = (data) => {
@@ -248,10 +249,26 @@ const storeChatMessage = (data) => {
             message: "Message not saved to database"
         });
 
-        io.emit(EVENTS.CHAT.SAVED, {
-            message: "Message saved to database"
+        io.emit(EVENTS.SUCCESS.CHAT.SEND, {
+            message: "Message saved to database",
+            messageData: data.messageData
         });
 
     });
 };
 
+const getChatMessages = (data) => {
+
+    mongo.chats().find({ "id": data.chatId }).toArray((err, doc) => {
+
+        if (err) io.emit(EVENTS.ERROR.CHAT.FETCH, {
+            message: "Messages not fetched from database"
+        });
+
+        io.emit(EVENTS.SUCCESS.CHAT.FETCH, {
+            message: "Messages found in database",
+            chat: doc[0]
+        });
+
+    });
+};
