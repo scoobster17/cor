@@ -1,9 +1,12 @@
 // react dependencies
 import React from 'react';
 
+// socket dependencies
+import socket from '../../config/socket/connection';
+import EVENTS from '../../config/socket/event-names';
+
 // app dependencies
 import ChatMessage from './message';
-import socket from '../../config/socket/connection';
 
 class ChatMessageList extends React.Component {
 
@@ -57,7 +60,7 @@ class ChatMessageList extends React.Component {
     sendMessage(event) {
         event.preventDefault();
         const message = event.target.querySelector('textarea').value;
-        socket.emit('sendMessage', { message });
+        socket.emit(EVENTS.CHAT.SEND, { message });
         return false;
     }
 }

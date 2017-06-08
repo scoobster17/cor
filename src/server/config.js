@@ -9,7 +9,10 @@ import path from 'path';
 import { Server } from 'http';
 import Express from 'express';
 const bodyParser = require('body-parser');
+
+// socket dependencies
 const socketio = require('socket.io');
+import EVENTS from '../app/js/config/socket/event-names';
 
 // database dependencies
 const mongo = require('./database/config.js');
@@ -206,6 +209,6 @@ server.listen(6077, () => {
 
 io.on('connection', (socket) => {
     console.log('a user connected');
-	socket.emit('receiving from server', { message: 'You have received this from the server, your connection is running' });
-	socket.on('sendMessage', (data) => console.log(data));
+	socket.emit(EVENTS.CONNECTION.TEST, { message: 'You have received this from the server, your connection is running' });
+	socket.on(EVENTS.CHAT.SEND, (data) => console.log(data));
 });
