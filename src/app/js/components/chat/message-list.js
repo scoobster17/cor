@@ -52,6 +52,56 @@ class ChatMessageList extends React.Component {
         )
     }
 
+    componentDidUpdate() {
+
+        const { messages } = this.state;
+        if (!messages.length) {
+
+            // fetch tracker's chat messages
+            this.getChatMessages().then((messages) => {
+                this.setChatMessages(JSON.parse(messages));
+            });
+        }
+
+    }
+
+    // setup score tracker promise
+    getChatMessages() {
+
+        const { tracker } = this.props;
+
+        return new Promise((resolve, reject) => {
+            const request = new XMLHttpRequest();
+            request.open('POST', '/data/chat/get', true);
+            request.setRequestHeader("Content-Type", "application/json");
+            request.onload = () => {
+                if (request.status >= 200 && request.status < 300) {
+                    resolve(request.response);
+                } else {
+                    reject({
+                        status: request.status,
+                        statusText: request.statusText
+                    });
+                }
+            };
+            request.onerror = () => {
+                reject({
+                    status: request.status,
+                    statusText: request.statusText
+                });
+            };
+            request.send(JSON.stringify({
+                "id": "9e0945f0-87e1-4dda-a28e-047b4500b1d7",
+                "chatId": tracker.id
+            })); // needs to be dynamic, and also search through competitor lists for trackers not owned
+        });
+    }
+
+    setChatMessages(messages) {
+        this.setState({ messages });
+    }
+
+
     componentWillReceiveProps() {
 
         socket.on(EVENTS.SUCCESS.CHAT.SEND, this.updateMessages.bind(this) );

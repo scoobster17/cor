@@ -210,6 +210,23 @@ app.post('/data/scores/get', (req, res) => {
     }
 });
 
+app.post('/data/chat/get', (req, res) => {
+
+    mongo.chats().find({
+        "id": req.body.chatId
+    }).toArray((err, doc) => {
+        if (err) res.status(500); // 500?
+        if (doc.length) {
+            let messagesToReturn = doc[0].messages;
+            if (messagesToReturn.length > 10) {
+                messagesToReturn = messagesToReturn.slice(doc.length - 11); // zero-indexed
+            }
+            res.status(200).send(messagesToReturn);
+        }
+    });
+
+});
+
 /* ************************************************************************** */
 
 /* SERVER */
