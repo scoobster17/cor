@@ -89,7 +89,7 @@ module.exports = [
     // Server JavaScript
     {
         devtool: 'source-map',
-        entry: path.join(__dirname, 'src', 'server', 'config.js'),
+        entry: path.join(__dirname, 'src', 'server', 'config', 'cor-server.js'),
         target: 'node',
         node: {
             __dirname: true

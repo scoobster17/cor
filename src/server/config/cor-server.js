@@ -4,18 +4,27 @@
 
 /* DEPENDENCIES */
 
-// server dependencies
+// utility dependencies
 import path from 'path';
-import { Server } from 'http';
+const fs = require('fs');
+
+// server dependencies
+import { Server as InsecureServer } from 'http';
+import { Server as SecureServer } from 'https';
+
+// server config dependencies
+import PORTS from './ports';
+
+// server framework dependencies
 import Express from 'express';
 const bodyParser = require('body-parser');
 
 // socket dependencies
 const socketio = require('socket.io');
-import EVENTS from '../app/js/config/socket/event-names';
+import EVENTS from '../../app/js/config/socket/event-names';
 
 // database dependencies
-const mongo = require('./database/config.js');
+const mongo = require('../database/config.js');
 mongo.connect();
 
 // data dependencies
@@ -27,8 +36,8 @@ import { renderToString } from 'react-dom/server';
 import { match, RouterContext } from 'react-router';
 
 // app dependencies
-import routes from '../app/js/config/routes';
-import NotFoundPage from '../app/js/components/pages/404';
+import routes from '../../app/js/config/routes';
+import NotFoundPage from '../../app/js/components/pages/404';
 
 /* ************************************************************************** */
 
@@ -37,19 +46,21 @@ import NotFoundPage from '../app/js/components/pages/404';
 const app = Express();
 
 // express setup
-app.use( Express.static(__dirname + '/../../dist/app/'));
+app.use( Express.static(__dirname + '/../../../dist/app/'));
 app.use( bodyParser.urlencoded({ extended: false }) );
 app.use( bodyParser.json() );
+app.set('port_https', PORTS.SECURE);
 
-// http server setup
-const server = Server(app);
-
-// socket.io setup
-const io = socketio(server);
+app.all('*', (req, res, next) => {
+    if (req.secure) {
+        return next();
+    };
+    res.redirect('https://' + req.hostname + ':' + app.get('port_https') + req.url);
+});
 
 // ejs setup
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '../', 'views'));
 
 // routes
 app.get('*', (req, res) => {
@@ -227,25 +238,47 @@ app.post('/data/chat/get', (req, res) => {
 
 });
 
+
+
+
 /* ************************************************************************** */
 
 /* SERVER */
 
-server.listen(6077, () => {
+// HTTP server
+const insecureServer = InsecureServer(app).listen(PORTS.INSECURE, () => {
 
-    const host = server.address().address;
-    const port = server.address().port;
+    const host = insecureServer.address().address || 'localhost';
+    const port = insecureServer.address().port || PORTS.INSECURE;
 
-    console.log('Cor scorekeeper app listening @ http://%s:%s', host, port);
+    console.log('Cor scorekeeper app (insecure - HTTP) listening @ http://%s:%s for re-direct to HTTPS', host, port);
+});
+
+// HTTPS server
+const sslOptions = {
+    key: fs.readFileSync(__dirname + '/../ssl/private.key'),
+    cert: fs.readFileSync(__dirname + '/../ssl/certificate.pem')
+};
+const secureServer = SecureServer(sslOptions, app);
+
+secureServer.listen(PORTS.SECURE, () => {
+
+    const host = secureServer.address().address || 'localhost';
+    const port = secureServer.address().port || PORTS.SECURE;
+
+    console.log('Cor scorekeeper app (secure - HTTPS) listening @ https://%s:%s', host, port);
 
 });
 
 /* ************************************************************************** */
 
-/* SOCKET.IO EVENTS */
+/* SOCKET.IO */
 
+// socket.io setup
+const io = socketio(secureServer);
+
+// socket.io event bindings
 io.on('connection', (socket) => {
-    console.log('a user connected');
 
     // demonstrate to the user that there is a successful connection
 	socket.emit(EVENTS.CONNECTION.TEST, { message: 'You have received this from the server, your connection is running' });
@@ -253,8 +286,10 @@ io.on('connection', (socket) => {
     // bind server functionality to socket events
     socket.on(EVENTS.CHAT.SEND, storeChatMessage);
 	socket.on(EVENTS.CHAT.FETCH, getChatMessages);
+
 });
 
+// socket.io callbacks
 const storeChatMessage = (data) => {
 
     const chats = mongo.chats();
