@@ -17,7 +17,13 @@ import PORTS from './ports';
 
 // server framework dependencies
 import Express from 'express';
+const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+
+// server authentication dependencies
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 // socket dependencies
 const socketio = require('socket.io');
@@ -47,8 +53,13 @@ const app = Express();
 
 // express setup
 app.use( Express.static(__dirname + '/../../../dist/app/'));
+app.use( cookieParser() );
 app.use( bodyParser.urlencoded({ extended: false }) );
 app.use( bodyParser.json() );
+app.use( session({ secret: 'cor blimey' }) );
+app.use( passport.initialize() );
+app.use( passport.session() ); // needs to be after Express.session()
+
 app.set('port_https', PORTS.SECURE);
 
 app.all('*', (req, res, next) => {
@@ -62,11 +73,89 @@ app.all('*', (req, res, next) => {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../', 'views'));
 
-// routes
+/* ************************************************************************** */
+
+/* AUTHENTICATION SETUP */
+
+passport.serializeUser((user, done) => {
+    done(null, user.username);
+});
+
+passport.deserializeUser((username, done) => {
+    mongo.users().find({ "username": username }).toArray((err, users) => {
+        done(err, users[0]);
+    });
+});
+
+// set up authentication using a username and password
+passport.use(new LocalStrategy(
+    (username, password, done) => {
+
+        mongo.users().find({ "username": username }).toArray((err, users) => {
+
+            if (err) {
+                return done(null, false, {
+                    message: 'An error has occurred.'
+                });
+            }
+
+            if (!users.length) {
+                return done(null, false, {
+                    message: 'Incorrect username or password.' // same message?
+                });
+            }
+
+            if (users[0].password != password) {
+                return done(null, false, {
+                    message: 'Incorrect username or password.'
+                });
+            }
+
+            return done(null, users[0]);
+
+        });
+
+
+    }
+));
+
+/* ************************************************************************** */
+
+/* APP ROUTING */
+
 app.get('*', (req, res) => {
 
-    // prevent clickjacking by adding HTTP Header for X-FRAME-OPTIONS
+    // for debugging purposes (temporary)
+    console.log(req.url, req.user);
+
+    // TODO prevent clickjacking by adding HTTP Header for X-FRAME-OPTIONS
     // res.get('X-Frame-Options') // === 'Deny'
+
+    let title;
+
+    // interrogate the URL to set the title, and perform other route-specific
+    // actions before the React App is hit on the server side for rendering
+    switch (req.url) {
+
+        // do not use react app if needing to log in, return login/reg page instead
+        case '/':
+        case '/login-register':
+            title = 'Log in or register'
+            return res.render('login-register.ejs', { title });
+            break;
+
+        case '/log-out':
+            title = 'You have been logged off, here you can log in again or register';
+            req.logout();
+            return res.render('login-register.ejs', { title });
+            break;
+
+        // TODO title handling for when client JS not enabled for other pages
+
+        default:
+            title = 'Home';
+
+    }
 
     match(
         { routes, location: req.url },
@@ -97,41 +186,59 @@ app.get('*', (req, res) => {
             }
 
             // render the index template with the embedded React markup
-            return res.render('index', { markup });
+            return res.render('index.ejs', { markup, title });
 
         }
     );
 });
 
-app.post('/data/users/add', (req, res) => {
+app.post('/data/users/log-in', (req, res, next) => {
+
+    req.login(
+        {
+            username: req.body.username,
+            password: req.body.password
+        },
+        (err) => {
+            if (err) return next(err);
+            return res.redirect('/scores');
+        }
+    );
+
+});
+
+app.post('/data/users/add', (req, res, next) => {
 
     // get the users from the database and
-    const users = mongo.users();
     const userData = req.body;
 
     // check if the user exists, and return if so
-    users.find({ "email": req.body.email }).toArray((err, doc) => {
+    mongo.users().find({ "username": req.body.username }).toArray((err, doc) => {
 
-        if (err) res.status(500); // 500?
+        if (err) res.redirect('/login-register?error=500')
 
         if (doc.length) {
 
-            res.status(403).send({
-                "message": "Email address already in use"  // needs to be email or password is incorrect for security
-            });
+           res.redirect('/login-register?error=duplicate')
 
         } else {
 
             // assign a random id to user and store to database
             userData.id = uuid();
-            users.save(userData, (err, saved) => {
 
-                if (err || !saved) res.status(500);
+            mongo.users().save(userData, (err, saved) => {
 
-                res.status(200);
+                if (err || !saved) res.redirect('/login-register?error=not%20saved');
+
+                passport.authenticate(
+                    'local',
+                    {
+                        successRedirect: '/scores',
+                        failureRedirect: '/login-register'
+                    }
+                )(req, res, next);
 
             });
-
         }
 
     });
@@ -237,9 +344,6 @@ app.post('/data/chat/get', (req, res) => {
     });
 
 });
-
-
-
 
 /* ************************************************************************** */
 

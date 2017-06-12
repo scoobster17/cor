@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title><%- title -%> | Cor scorekeeper app</title>
+	<link rel="stylesheet" type="text/css" href="/css/small-screens.css">
+	<link rel="stylesheet" type="text/css" href="/css/large-screens.css" media="(min-width: 768px) and (min-device-width: 768px)">
+</head>
+<body>
+	<div id="container" class="container">
+		<header class="global-header">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="/">
+                            Cor scorekeeper app
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <section>
+                <h1>
+                    Cor blimey, is that the score?!
+                    <span class="visually-hidden">
+                        Welcome to the &ldquo;Cor&rdquo; Scorekeeper web application.
+                    </span>
+                </h1>
+                <p>
+                    Cor is a scorekeeper app, built for you to track any kind of
+                    score that you like, whether it is your work pool wins, or
+                    to track the games of a basketball team you play for.
+                </p>
+            </section>
+            <section>
+                <h2>Login or Register</h2>
+                <p>
+                    You must log in to use the Cor scorekeeper app. If you do
+                    not have an account already, you can create one here.
+                </p>
+                <ul>
+                    <li>
+                        <h3>Existing users, you can log in here</h3>
+                        <form action="/data/users/log-in" method="POST">
+                            <fieldset>
+                                <label htmlFor="email">Email address:</label>
+                                <input type="email" id="email" name="username" required />
+                                <label htmlFor="password">Password:</label>
+                                <input type="password" id="password" name="password" required />
+                            </fieldset>
+                            <input type="submit" value="Log in" />
+                        </form>
+                    </li>
+                    <li>
+                        <h3>Register as a new user to start using the app</h3>
+                        <p>Register to start tracking your scores.</p>
+                        <form id="register-form" action="/data/users/add" method="POST">
+                            <fieldset>
+                                <h3>Personal details</h3>
+                                <label htmlFor="first-name">First name:</label>
+                                <input type="text" id="first-name" name="first-name" required />
+                                <label htmlFor="last-name">Last name:</label>
+                                <input type="text" id="last-name" name="last-name" required />
+                            </fieldset>
+                            <fieldset>
+                                <h3>Credentials</h3>
+                                <label htmlFor="register-email">Email address:</label>
+                                <input type="email" id="register-email" name="username" required />
+                                <label htmlFor="register-password">Password:</label>
+                                <input type="password" id="register-password" name="password" required />
+                            </fieldset>
+                            <input type="submit" value="Register" />
+                        </form>
+                    </li>
+                </ul>
+            </section>
+        </main>
+        <footer class="global-footer">
+            <p>&copy; Phil Gibbins</p>
+        </footer>
+	</div>
+</body>
+</html>

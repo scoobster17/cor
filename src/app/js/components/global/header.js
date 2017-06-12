@@ -21,16 +21,6 @@ class GlobalHeader extends React.Component {
                             </Link>
                         </li>
                         <li>
-                            <Link to="/login">
-                                Log in
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/register">
-                                Register
-                            </Link>
-                        </li>
-                        <li>
                             <Link to="/scores">
                                 My scores
                             </Link>
@@ -39,6 +29,13 @@ class GlobalHeader extends React.Component {
                             <Link to="/add-tracker">
                                 Add new scoresheet
                             </Link>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <a href="/log-out">
+                                Log out
+                            </a>
                         </li>
                     </ul>
                 </nav>
