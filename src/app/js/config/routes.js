@@ -11,11 +11,11 @@ import AddTrackerPage from '../components/pages/add-tracker';
 import NotFoundPage from '../components/pages/404';
 
 const routes = (
-    <Route path="/" component={ Layout }>
-        <Route path="scores" component={ ListPage } />
-        <Route path="scores/:urlText" component={ DetailsPage } />
-        <Route path="add-tracker" component={ AddTrackerPage } />
-        <Route path="404" component={ NotFoundPage } />
+    <Route component={ Layout }>
+        <Route path="/scores" component={ ListPage } />
+        <Route path="/scores/:urlText" component={ DetailsPage } />
+        <Route path="/add-tracker" component={ AddTrackerPage } />
+        <Route path="/404" component={ NotFoundPage } />
         <Route path="*" component={ NotFoundPage } />
     </Route>
 )

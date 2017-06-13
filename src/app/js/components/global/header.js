@@ -9,17 +9,12 @@ class GlobalHeader extends React.Component {
                 <nav>
                     <ul>
                         <li>
-                            <Link to="/">
+                            <Link to="/scores">
                                 Cor scorekeeper app
                             </Link>
                         </li>
                     </ul>
                     <ul className="global-nav">
-                        <li>
-                            <Link to="/">
-                                Home
-                            </Link>
-                        </li>
                         <li>
                             <Link to="/scores">
                                 My scores
