@@ -123,73 +123,129 @@ passport.use(new LocalStrategy(
 
 /* APP ROUTING */
 
-app.get('*', (req, res) => {
+app.get(
+    [
+        '/login-register',
+        '/log-out'
+    ],
+    (req, res) => {
 
-    // for debugging purposes (temporary)
-    console.log(req.url, req.user);
+        let title;
 
-    // TODO prevent clickjacking by adding HTTP Header for X-FRAME-OPTIONS
-    // res.get('X-Frame-Options') // === 'Deny'
+        // interrogate the URL to set the title, and perform other route-specific
+        // actions before the React App is hit on the server side for rendering
+        switch (req.url) {
 
-    let title;
+            case '/login-register':
+                title = 'Log in or register';
+                break;
 
-    // interrogate the URL to set the title, and perform other route-specific
-    // actions before the React App is hit on the server side for rendering
-    switch (req.url) {
-
-        // do not use react app if needing to log in, return login/reg page instead
-        case '/':
-        case '/login-register':
-            title = 'Log in or register'
-            return res.render('login-register.ejs', { title });
-            break;
-
-        case '/log-out':
-            title = 'You have been logged off, here you can log in again or register';
-            req.logout();
-            return res.render('login-register.ejs', { title });
-            break;
-
-        // TODO title handling for when client JS not enabled for other pages
-
-        default:
-            title = 'Home';
-
-    }
-
-    match(
-        { routes, location: req.url },
-        (err, redirectLocation, renderProps) => {
-
-            // show error if one present
-            if (err) {
-                console.log('');
-                console.log('');
-                console.log('**500 ERROR**');
-                console.log('');
-                console.log('Request URL: ' + req.url);
-                return res.status(500).send(err.message);
-            }
-
-            // propogate redirect to browser if one present
-            if (redirectLocation) {
-                return res.redirect(302, redirectLocation.pathname + redirectLocation.search);
-            }
-
-            // generate markup for the current route
-            let markup;
-            if (renderProps) {
-                markup = renderToString(<RouterContext {...renderProps} />);
-            } else {
-                markup = renderToString(<NotFoundPage />);
-                res.status(404);
-            }
-
-            // render the index template with the embedded React markup
-            return res.render('index.ejs', { markup, title });
+            // log the user out
+            case '/log-out':
+                title = 'You have been logged off, here you can log in again or register';
+                req.logout();
+                break;
 
         }
-    );
+
+        return res.render('login-register.ejs', { title });
+
+    }
+);
+
+app.get(
+    [
+        '/',
+        '/scores',
+        '/scores/*',
+        '/add-tracker',
+        '/404'
+    ],
+    (req, res) => {
+
+        // for debugging purposes (temporary)
+        console.log(req.url, req.isAuthenticated());
+
+        // TODO prevent clickjacking by adding HTTP Header for X-FRAME-OPTIONS
+        // res.get('X-Frame-Options') // === 'Deny'
+
+        // interrogate all app-related requests; if not authenticated, redirect
+        // to login page.
+        // 404 page doesn't technically need authentication, but stops guests
+        // knowing what routes do/don't exist. Except code is on GitHub! :)
+        if (!req.isAuthenticated()) return res.redirect('/login-register');
+
+        // interrogate the URL to set the title, and perform other route-specific
+        // actions before the React App is hit on the server side for rendering
+        let title;
+        switch (true) {
+
+            // do not use react app if needing to log in, return login/reg page instead
+            case (req.url == '/'):
+            case (req.url == '/scores'):
+                title = 'Your Scores';
+                break;
+
+            case (/^\/scores\/[a-zA-Z0-9\-]+$/.test(req.url)):
+                title = 'Score Details Page'; // TODO make dynamic and check db for match
+                break;
+
+            case (req.url == '/add-tracker'):
+                title = 'Add score tracker';
+                break;
+
+            case (req.url == '/404'):
+                title = 'Page not found';
+                break;
+
+            default:
+                title = '';
+
+        }
+
+        // attempt to render react app and return to client
+        match(
+            { routes, location: req.url },
+            (err, redirectLocation, renderProps) => {
+
+                // show error if one present
+                if (err) {
+                    console.log('');
+                    console.log('');
+                    console.log('**500 ERROR**');
+                    console.log('');
+                    console.log('Request URL: ' + req.url);
+                    return res.status(500).send(err.message);
+                }
+
+                // propogate redirect to browser if one present
+                if (redirectLocation) {
+                    return res.redirect(302, redirectLocation.pathname + redirectLocation.search);
+                }
+
+                // generate markup for the current route
+                let markup;
+                if (renderProps) {
+                    markup = renderToString(<RouterContext {...renderProps} />);
+                } else {
+                    markup = renderToString(<NotFoundPage />);
+                    res.status(404);
+                }
+
+                // render the index template with the embedded React markup
+                return res.render('index.ejs', { markup, title });
+
+            }
+        );
+    }
+);
+
+// catch all for all GET routes not already explicitly covered
+app.get('*', (req, res) => {
+
+    if (!req.isAuthenticated()) return res.redirect('/login-register');
+    res.redirect('/scores');
+
 });
 
 app.post('/data/users/log-in', (req, res, next) => {
@@ -254,10 +310,12 @@ app.post('/data/scores/add', (req, res) => {
     // check if the user exists, and return if so
     scores.find({ "name": req.body.name }).toArray((err, doc) => {
 
+        // TODO needs to re-direct
         if (err) res.status(500); // 500?
 
         if (doc.length) {
 
+            // TODO needs to re-direct
             res.status(403).send({
                 "message": "Score tracker name address already in use for this user"  // needs to be email or password is incorrect for security
             });
@@ -269,6 +327,7 @@ app.post('/data/scores/add', (req, res) => {
             scoreData.id = trackerId;
             scores.save(scoreData, (err, saved) => {
 
+                // TODO needs to re-direct
                 if (err || !saved) res.status(500).send({
                     "error": "Tracker not set up, please contact an administrator"
                 });
@@ -284,6 +343,7 @@ app.post('/data/scores/add', (req, res) => {
                     ]
                 }
 
+                // TODO needs to re-direct
                 // create a chat for this event with the same ID as the tracker
                 chats.save(chatTemplate, (err, saved) => {
                     if (err || !saved) res.status(500).send({
