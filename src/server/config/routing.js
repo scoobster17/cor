@@ -1,3 +1,6 @@
+// data dependencies
+const uuid = require('uuid/v4');
+
 // react dependencies
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -9,7 +12,18 @@ import NotFoundPage from '../../app/js/components/pages/404';
 
 const setupAppRouting = (app, db, authenticator) => {
 
-    /* GET REGQUESTS */
+    /* ALL REQUESTS */
+
+    // re-direct requests from HTTP to HTTPS protocol
+    app.all('*', (req, res, next) => {
+        if (req.secure) {
+            return next();
+        };
+        res.redirect('https://' + req.hostname + ':' + app.get('port_https') + req.url);
+    });
+
+    /* GET REQUESTS */
+
     app.get(
         [
             '/login-register',
@@ -136,6 +150,7 @@ const setupAppRouting = (app, db, authenticator) => {
     });
 
     /* POST REQUESTS */
+
     app.post('/data/users/log-in', (req, res, next) => {
 
         req.login(

@@ -5,7 +5,6 @@
 /* DEPENDENCIES */
 
 // utility dependencies
-import path from 'path';
 const fs = require('fs');
 
 // server dependencies
@@ -17,16 +16,11 @@ import PORTS from './ports';
 
 // server framework dependencies
 import Express from 'express';
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const session = require('express-session');
+import setupFramework from '../framework/config.js';
 
 // database dependencies
 const mongo = require('../database/config.js');
 mongo.connect();
-
-// data dependencies
-const uuid = require('uuid/v4');
 
 // authentication dependencies
 const passport = require('passport');
@@ -46,27 +40,7 @@ import ioSetup from '../sockets/event-bindings';
 
 const app = Express();
 
-// express setup
-app.use( Express.static(__dirname + '/../../../dist/app/'));
-app.use( cookieParser() );
-app.use( bodyParser.urlencoded({ extended: false }) );
-app.use( bodyParser.json() );
-app.use( session({ secret: 'cor blimey' }) );
-app.use( passport.initialize() );
-app.use( passport.session() ); // needs to be after Express.session()
-
-app.set('port_https', PORTS.SECURE);
-
-app.all('*', (req, res, next) => {
-    if (req.secure) {
-        return next();
-    };
-    res.redirect('https://' + req.hostname + ':' + app.get('port_https') + req.url);
-});
-
-// ejs setup
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../', 'views'));
+setupFramework(app, passport);
 
 /* ************************************************************************** */
 
