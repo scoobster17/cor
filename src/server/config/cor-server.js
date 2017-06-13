@@ -21,20 +21,16 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
-// server authentication dependencies
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-
-// socket dependencies
-const socketio = require('socket.io');
-import EVENTS from '../../app/js/config/socket/event-names';
-
 // database dependencies
 const mongo = require('../database/config.js');
 mongo.connect();
 
 // data dependencies
 const uuid = require('uuid/v4');
+
+// authentication dependencies
+const passport = require('passport');
+import authenticationSetup from '../authentication/local';
 
 // react dependencies
 import React from 'react';
@@ -44,6 +40,10 @@ import { match, RouterContext } from 'react-router';
 // app dependencies
 import routes from '../../app/js/config/routes';
 import NotFoundPage from '../../app/js/components/pages/404';
+
+// socket dependencies
+const socketio = require('socket.io');
+import EVENTS from '../../app/js/config/socket/event-names';
 
 /* ************************************************************************** */
 
@@ -77,47 +77,7 @@ app.set('views', path.join(__dirname, '../', 'views'));
 
 /* AUTHENTICATION SETUP */
 
-passport.serializeUser((user, done) => {
-    done(null, user.username);
-});
-
-passport.deserializeUser((username, done) => {
-    mongo.users().find({ "username": username }).toArray((err, users) => {
-        done(err, users[0]);
-    });
-});
-
-// set up authentication using a username and password
-passport.use(new LocalStrategy(
-    (username, password, done) => {
-
-        mongo.users().find({ "username": username }).toArray((err, users) => {
-
-            if (err) {
-                return done(null, false, {
-                    message: 'An error has occurred.'
-                });
-            }
-
-            if (!users.length) {
-                return done(null, false, {
-                    message: 'Incorrect username or password.' // same message?
-                });
-            }
-
-            if (users[0].password != password) {
-                return done(null, false, {
-                    message: 'Incorrect username or password.'
-                });
-            }
-
-            return done(null, users[0]);
-
-        });
-
-
-    }
-));
+authenticationSetup(mongo);
 
 /* ************************************************************************** */
 
