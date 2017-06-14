@@ -163,17 +163,18 @@ const setupAppRouting = (app, db, authenticator) => {
 
     app.post('/data/users/log-in', (req, res, next) => {
 
-        req.login(
-            {
-                username: req.body.username,
-                password: req.body.password
-            },
-            (err) => {
+        authenticator.authenticate(
+            'local',
+            (err, user, info) => {
                 if (err) return next(err);
-                setUserCookie(req, res);
-                return res.redirect('/scores');
+                if (!user) return res.redirect('/login-register');
+                req.login(user, (err) => {
+                    if (err) return next(err);
+                    setUserCookie(req, res);
+                    return res.redirect('/scores');
+                });
             }
-        );
+        )(req, res, next);
 
     });
 
