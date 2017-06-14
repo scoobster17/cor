@@ -4,15 +4,8 @@
 
 /* DEPENDENCIES */
 
-// utility dependencies
-const fs = require('fs');
-
 // server dependencies
-import { Server as InsecureServer } from 'http';
-import { Server as SecureServer } from 'https';
-
-// server config dependencies
-import PORTS from './ports';
+import setupServers from './servers.js';
 
 // server framework dependencies
 import Express from 'express';
@@ -56,35 +49,12 @@ setupAppRouting(app, mongo, passport);
 
 /* ************************************************************************** */
 
-/* SERVER */
+/* SERVERS */
 
-// HTTP server
-const insecureServer = InsecureServer(app).listen(PORTS.INSECURE, () => {
-
-    const host = insecureServer.address().address || 'localhost';
-    const port = insecureServer.address().port || PORTS.INSECURE;
-
-    console.log('Cor scorekeeper app (insecure - HTTP) listening @ http://%s:%s for re-direct to HTTPS', host, port);
-});
-
-// HTTPS server
-const sslOptions = {
-    key: fs.readFileSync(__dirname + '/../ssl/private.key'),
-    cert: fs.readFileSync(__dirname + '/../ssl/certificate.pem')
-};
-const secureServer = SecureServer(sslOptions, app);
-
-secureServer.listen(PORTS.SECURE, () => {
-
-    const host = secureServer.address().address || 'localhost';
-    const port = secureServer.address().port || PORTS.SECURE;
-
-    console.log('Cor scorekeeper app (secure - HTTPS) listening @ https://%s:%s', host, port);
-
-});
+const servers = setupServers(app);
 
 /* ************************************************************************** */
 
 /* SOCKET.IO */
 
-ioSetup(socketio(secureServer), mongo);
+ioSetup(socketio(servers.secureServer), mongo);
