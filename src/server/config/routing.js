@@ -9,6 +9,13 @@ import { match, RouterContext } from 'react-router';
 // app dependencies
 import routes from '../../app/js/config/routes';
 import NotFoundPage from '../../app/js/components/pages/404';
+import COOKIES from '../../app/js/config/cookies/names';
+
+const setUserCookie = (req, res) => {
+    res.cookie(COOKIES.USER, JSON.stringify({
+        email: req.body.username
+    }));
+};
 
 const setupAppRouting = (app, db, authenticator) => {
 
@@ -32,6 +39,9 @@ const setupAppRouting = (app, db, authenticator) => {
         (req, res) => {
 
             let title;
+
+            // clear any existing cookie data there is for the user
+            res.clearCookie(COOKIES.USER);
 
             // interrogate the URL to set the title, and perform other route-specific
             // actions before the React App is hit on the server side for rendering
@@ -160,6 +170,7 @@ const setupAppRouting = (app, db, authenticator) => {
             },
             (err) => {
                 if (err) return next(err);
+                setUserCookie(req, res);
                 return res.redirect('/scores');
             }
         );
@@ -191,9 +202,14 @@ const setupAppRouting = (app, db, authenticator) => {
 
                     authenticator.authenticate(
                         'local',
-                        {
-                            successRedirect: '/scores',
-                            failureRedirect: '/login-register'
+                        (err, user, info) => {
+                            if (err) return next(err);
+                            if (!user) return res.redirect('/login-register');
+                            req.login(user, (err) => {
+                                if (err) return next(err);
+                                setUserCookie(req, res);
+                                return res.redirect('/scores');
+                            });
                         }
                     )(req, res, next);
 
