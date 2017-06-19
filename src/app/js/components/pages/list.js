@@ -11,12 +11,13 @@ class ListPage extends React.Component {
         super();
 
         this.state = {
-            userTrackers: []
+            userTrackers: [],
+            participatingTrackers: []
         }
     }
 
     render() {
-        const { userTrackers } = this.state;
+        const { userTrackers, participatingTrackers } = this.state;
         return (
             <main>
                 <h1>Your scores</h1>
@@ -34,6 +35,25 @@ class ListPage extends React.Component {
                     {
                         userTrackers &&
                         userTrackers.map((tracker, index) => {
+                            return (<TrackerSummary tracker={ tracker } key={ index } />);
+                        })
+                    }
+                </ul>
+                <h2>Scores you are participating in</h2>
+                <p>Here is a list of scores that you are participating in, but do not own.</p>
+                <ul className="faux-table-headers" aria-hidden="true">
+                    <li>Name</li>
+                    <li>Activity</li>
+                    <li>Type</li>
+                    <li><span className="visually-hidden">Number of </span>players</li>
+                    <li>Wins</li>
+                    <li>Losses</li>
+                    <li>Draws</li>
+                </ul>
+                <ul className="tracker-list">
+                    {
+                        participatingTrackers &&
+                        participatingTrackers.map((tracker, index) => {
                             return (<TrackerSummary tracker={ tracker } key={ index } />);
                         })
                     }
