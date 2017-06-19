@@ -42,17 +42,28 @@ class ListPage extends React.Component {
         )
     }
 
+    componentWillReceiveProps() {
+        this.handleGetUserTrackers();
+    }
+
     componentDidMount() {
+        this.handleGetUserTrackers();
+    }
+
+    handleGetUserTrackers() {
+
+        const { user } = this.props;
 
         // fetch user's score trackers
-        this.getUserTrackers().then((userTrackers) => {
-            this.setUserTrackers(JSON.parse(userTrackers));
-        });
-
+        if (user) {
+            this.getUserTrackers(user).then((userTrackers) => {
+                this.setUserTrackers(JSON.parse(userTrackers));
+            });
+        }
     }
 
     // setup user's score trackers promise
-    getUserTrackers() {
+    getUserTrackers(user) {
         return new Promise((resolve, reject) => {
             const request = new XMLHttpRequest();
             request.open('POST', '/data/scores/get', true);
@@ -73,7 +84,7 @@ class ListPage extends React.Component {
                     statusText: request.statusText
                 });
             };
-            request.send(JSON.stringify({ "id": "9e0945f0-87e1-4dda-a28e-047b4500b1d7" })); // needs to be dynamic, and also search through competitor lists for trackers not owned
+            request.send(JSON.stringify({ "id": user.id })); // should also search through competitor lists for trackers not owned
         });
     }
 

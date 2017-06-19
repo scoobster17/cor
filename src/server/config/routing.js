@@ -277,6 +277,16 @@ const setupAppRouting = (app, db, authenticator) => {
 
     });
 
+    app.post('/data/user/get', (req, res) => {
+
+        db.users().find({ "username": req.body.email }).toArray((err, users) => {
+            if (err) res.status(500); // 500?
+            if (!users.length) res.status(500); // 500?
+            res.status(200).send(users[0]);
+        });
+
+    });
+
     app.post('/data/scores/get', (req, res) => {
 
         const scoreData = req.body;
@@ -287,6 +297,7 @@ const setupAppRouting = (app, db, authenticator) => {
                 "urlText": scoreData.urlText
             }).toArray((err, doc) => {
                 if (err) res.status(500); // 500?
+                // need error handling here
                 if (doc.length) {
                     res.status(200).send(doc[0]);
                 }
@@ -296,6 +307,7 @@ const setupAppRouting = (app, db, authenticator) => {
                 "creator": scoreData.id
             }).toArray((err, doc) => {
                 if (err) res.status(500); // 500?
+                // need error handling here
                 if (doc.length) {
                     res.status(200).send(doc);
                 }
