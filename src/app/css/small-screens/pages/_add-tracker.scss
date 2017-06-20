@@ -1,9 +1,0 @@
-input[value="People"] ~ .teamInformation,
-input[value="Team"] ~ .competitorInformation {
-    display:none;
-}
-
-input[value="People"]:checked ~ .competitorInformation,
-input[value="Team"]:checked ~ .teamInformation {
-    display:block;
-}
