@@ -287,6 +287,16 @@ const setupAppRouting = (app, db, authenticator) => {
 
     });
 
+    // TODO: filter user performing search, also can make suggestions?
+    app.post('/data/user/search', (req, res) => {
+
+        db.users().find({ "username": req.body.email }).toArray((err, users) => {
+            if (err) res.status(500); // 500?
+            res.status(200).send(users);
+        });
+
+    });
+
     app.post('/data/scores/get', (req, res) => {
 
         const scoreData = req.body;
