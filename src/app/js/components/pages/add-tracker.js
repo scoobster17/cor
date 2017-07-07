@@ -175,7 +175,7 @@ class AddTrackerPage extends React.Component {
             request.setRequestHeader("Content-Type", "application/json");
 
             // to be improved - get inputs
-            const inputs = addTrackerForm.querySelectorAll('input[name][type="text"], input[name][type="checkbox"], input[type="radio"]');
+            const inputs = addTrackerForm.querySelectorAll('input[name][type="text"], input[name][type="checkbox"], input[type="radio"], input[type="hidden"]');
             const formDataObj = {};
 
             // assign form data to object
