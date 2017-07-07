@@ -17,6 +17,7 @@ class AddTrackerPage extends React.Component {
 
         this.handleTrackerTypeChange = this.handleTrackerTypeChange.bind(this);
         this.changeCompetitors = this.changeCompetitors.bind(this);
+        this.isCompetitor = this.isCompetitor.bind(this);
     }
 
     render() {
@@ -45,7 +46,7 @@ class AddTrackerPage extends React.Component {
                             <fieldset hidden={ selectedTrackerType !== 'people' }>
                                 <h3>Competitor Search</h3>
                                 <label htmlFor="competitors">Search for competitors<span className="visually-hidden"> by email address</span>:</label>
-                                <input type="text" id="competitorSearch" name="competitorSearch" placeholder="Enter email address" />
+                                <input type="text" id="competitorSearch" placeholder="Enter email address" />
                                 <button id="competitorSearchSubmit">Search<span className="visually-hidden"> for competitor</span></button>
                                 {
                                     competitorSearchResults &&
@@ -53,8 +54,8 @@ class AddTrackerPage extends React.Component {
                                         {
                                             competitorSearchResults.map((person, index) => {
                                                 return <li key={ index }>
-                                                    <label htmlFor={ 'competitors-' + person.id }>{ person.username }</label>
-                                                    <input type="checkbox" name="competitors" id={ 'competitors-' + person.id } value={ person.id } onChange={ this.changeCompetitors } />
+                                                    <label htmlFor={ 'person-' + person.id }>{ person.username }</label>
+                                                    <input type="checkbox" id={ 'person-' + person.id } value={ person.id } checked={ this.isCompetitor(person.id) } onChange={ this.changeCompetitors } />
                                                 </li>;
                                             })
                                         }
@@ -67,7 +68,10 @@ class AddTrackerPage extends React.Component {
                                         {
                                             competitors.map((competitor, index) => {
                                                 return <li key={ index }>
-                                                    { competitor['first-name'] + ' ' + competitor['last-name'] + ' (' + competitor.username + ')' }
+                                                    <label htmlFor={ 'competitors-' + competitor.id }>
+                                                        { competitor['first-name'] + ' ' + competitor['last-name'] + ' (' + competitor.username + ')' }
+                                                    </label>
+                                                    <input type="checkbox" name="competitors" id={ 'competitor-' + competitor.id } value={ competitor.id } checked={ this.isCompetitor(competitor.id) } onChange={ this.changeCompetitors } />
                                                 </li>;
                                             })
                                         }
@@ -109,16 +113,21 @@ class AddTrackerPage extends React.Component {
         // if checked, add to list of competitors
         if (event.target.checked) {
             const competitorDetails = competitorSearchResults.filter((competitor) => {
-                return ('competitors-' + competitor.id) === event.target.getAttribute('id');
+                const actualId = event.target.getAttribute('id').replace(/^(competitor\-|person\-)/, '');
+                return actualId === competitor.id;
             });
             competitors.push(competitorDetails[0]);
 
         // else remove competitor from list
         } else {
             const competitorIndex = competitors.findIndex((competitor) => {
-                return competitor.id = event.target.id;
+                const actualId = event.target.getAttribute('id').replace(/^(competitor\-|person\-)/, '');
+                return actualId === competitor.id;
             });
-            competitors.splice(competitorIndex, competitorIndex + 1);
+            competitors = [
+                ...competitors.slice(0, competitorIndex),
+                ...competitors.slice(competitorIndex + 1)
+            ];
         }
 
         this.setState({
@@ -127,6 +136,14 @@ class AddTrackerPage extends React.Component {
                 competitors
             }
         });
+    }
+
+    isCompetitor(id) {
+        const { competitors } = this.state.form;
+        const match = competitors.filter((competitor) => {
+            return competitor.id === id;
+        });
+        return match.length;
     }
 
     componentWillMount() {
@@ -152,7 +169,7 @@ class AddTrackerPage extends React.Component {
             request.setRequestHeader("Content-Type", "application/json");
 
             // to be improved - get inputs
-            const inputs = addTrackerForm.getElementsByTagName('input');
+            const inputs = addTrackerForm.querySelectorAll('input[name][type="text"], input[name][type="checkbox"], input[type="radio"]');
             const formDataObj = {};
 
             // assign form data to object
@@ -162,8 +179,6 @@ class AddTrackerPage extends React.Component {
 
             formDataObj['type'] = this.state.form.selectedTrackerType;
             formDataObj['urlText'] = formDataObj.name.toLowerCase().replace(/ /g, '-');
-            delete formDataObj['competitorSearch'];
-            // TODO remove submit button being sent
 
             // send data via AJAX
             request.send(JSON.stringify(formDataObj));
