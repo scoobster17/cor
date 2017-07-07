@@ -161,6 +161,12 @@ class AddTrackerPage extends React.Component {
 
             event.preventDefault();
 
+            const competitorInputs = addTrackerForm.querySelectorAll('input[name="competitors"]');
+            const competitorIds = [];
+            for(let input of competitorInputs) {
+                competitorIds.push(input.value);
+            };
+
             // promises should be used to add callback functionality
 
             // create ajax request as post sending JSON
@@ -179,6 +185,7 @@ class AddTrackerPage extends React.Component {
 
             formDataObj['type'] = this.state.form.selectedTrackerType;
             formDataObj['urlText'] = formDataObj.name.toLowerCase().replace(/ /g, '-');
+            formDataObj['competitors'] = competitorIds;
 
             // send data via AJAX
             request.send(JSON.stringify(formDataObj));
