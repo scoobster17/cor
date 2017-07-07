@@ -313,14 +313,24 @@ const setupAppRouting = (app, db, authenticator) => {
                 }
             });
         } else {
+
+            // find trackers owned
             db.scores().find({
                 "creator": scoreData.id
-            }).toArray((err, doc) => {
-                if (err) res.status(500); // 500?
-                // need error handling here
-                if (doc.length) {
-                    res.status(200).send(doc);
-                }
+            }).toArray((err, ownedTrackers) => {
+                // if (err) res.status(500); // 500?
+
+                // find trackers
+                db.scores().find({
+                    "competitors": { "$in": [ scoreData.id ] }
+                }).toArray((err, trackersParticipatingIn) => {
+                    // if (err) res.status(500); // 500?
+
+                    res.status(200).send({
+                        owned: ownedTrackers,
+                        participating: trackersParticipatingIn
+                    });
+                });
             });
         }
     });

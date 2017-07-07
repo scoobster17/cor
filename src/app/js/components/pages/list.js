@@ -76,8 +76,8 @@ class ListPage extends React.Component {
 
         // fetch user's score trackers
         if (user) {
-            this.getUserTrackers(user).then((userTrackers) => {
-                this.setUserTrackers(JSON.parse(userTrackers));
+            this.getUserTrackers(user).then((trackers) => {
+                this.setUserTrackers(JSON.parse(trackers));
             });
         }
     }
@@ -108,8 +108,11 @@ class ListPage extends React.Component {
         });
     }
 
-    setUserTrackers(userTrackers) {
-        this.setState({ userTrackers });
+    setUserTrackers(trackers) {
+        this.setState({
+            userTrackers: trackers.owned,
+            participatingTrackers: trackers.participating
+        });
     }
 }
 
