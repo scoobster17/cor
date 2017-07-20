@@ -15,11 +15,13 @@ class ChatMessageList extends React.Component {
 
         this.state = {
             messages: [],
-            isChatShown: false
+            isChatShown: false,
+            chatHistoryFetched: false
         };
 
         // bind methods
         this.sendMessage = this.sendMessage.bind(this);
+        this.handleToggleChat = this.handleToggleChat.bind(this);
     }
 
     render() {
@@ -34,7 +36,9 @@ class ChatMessageList extends React.Component {
                         { title }
                     </h2>
                 }
-                <button id="chat-toggle" aria-hidden="true">{ isChatShown ? 'Hide' : 'Show' } chat for activity</button>
+                <button id="chat-toggle" aria-hidden="true" onClick={ this.handleToggleChat }>
+                    { isChatShown ? 'Hide' : 'Show' } chat for activity
+                </button>
                 {
                     isChatShown && messages &&
                     messages.map((message, index) => {
@@ -57,59 +61,32 @@ class ChatMessageList extends React.Component {
         )
     }
 
-    componentDidMount() {
-        const { isChatShown } = this.state;
-        const chatToggle = document.getElementById('chat-toggle');
-
-        chatToggle.addEventListener('click', () => {
-            this.setState({
-                isChatShown: !this.state.isChatShown
-            });
-        });
-    };
-
-    componentDidUpdate() {
-
-        const { messages } = this.state;
-        if (!messages.length) {
-
-            // fetch tracker's chat messages
-            this.getChatMessages().then((messages) => {
-                this.setChatMessages(JSON.parse(messages));
-            });
-        }
-
-    }
-
-    // setup score tracker promise
-    getChatMessages() {
+    handleToggleChat() {
 
         const { tracker } = this.props;
+        const { isChatShown, chatHistoryFetched } = this.state;
 
-        return new Promise((resolve, reject) => {
-            const request = new XMLHttpRequest();
-            request.open('POST', '/data/chat/get', true);
-            request.setRequestHeader("Content-Type", "application/json");
-            request.onload = () => {
-                if (request.status >= 200 && request.status < 300) {
-                    resolve(request.response);
-                } else {
-                    reject({
-                        status: request.status,
-                        statusText: request.statusText
-                    });
-                }
-            };
-            request.onerror = () => {
-                reject({
-                    status: request.status,
-                    statusText: request.statusText
-                });
-            };
-            request.send(JSON.stringify({
-                "id": "9e0945f0-87e1-4dda-a28e-047b4500b1d7",
+        // if the chat is not shown and messages have not been fetched from
+        // the database, fetch previous messages from the database
+        if (!isChatShown && !chatHistoryFetched) {
+
+
+            // fetch the history
+            socket.emit(EVENTS.CHAT.FETCH, {
+                // "userId": "9e0945f0-87e1-4dda-a28e-047b4500b1d7" // TODO needs to be used for searching competitor chats too
                 "chatId": tracker.id
-            })); // needs to be dynamic, and also search through competitor lists for trackers not owned
+            });
+
+        }
+
+        // hide/show the chat as necessary
+        this.toggleChatVisibility();
+
+    };
+
+    toggleChatVisibility() {
+        this.setState({
+            isChatShown: !this.state.isChatShown
         });
     }
 
@@ -123,7 +100,7 @@ class ChatMessageList extends React.Component {
         socket.on(EVENTS.SUCCESS.CHAT.SEND, this.updateMessages.bind(this) );
         socket.on(EVENTS.ERROR.CHAT.SEND, (data) => console.log(data) );
 
-        socket.on(EVENTS.SUCCESS.CHAT.FETCH, this.updateMessages.bind(this) );
+        socket.on(EVENTS.SUCCESS.CHAT.FETCH, this.setInitialMessages.bind(this) );
 
     }
 
@@ -148,6 +125,13 @@ class ChatMessageList extends React.Component {
         return false;
     }
 
+    setInitialMessages( data ) {
+        this.setState({
+            messages: data.chatMessages,
+            chatHistoryFetched: true
+        });
+    }
+
     updateMessages( data ) {
 
         const { messages } = this.state;
@@ -156,6 +140,7 @@ class ChatMessageList extends React.Component {
             messages: [ ...messages, data.messageData ]
         });
         // emit to other users that another message has been saved
+
     }
 
 }

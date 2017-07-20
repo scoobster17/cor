@@ -35,17 +35,31 @@ const ioSetup = (io, db) => {
 
     const getChatMessages = (data) => {
 
-        db.chats().find({ "id": data.chatId }).toArray((err, doc) => {
+        db.chats().find({
+            "id": data.chatId
+        }).toArray((err, doc) => {
 
-            if (err) io.emit(EVENTS.ERROR.CHAT.FETCH, {
-                message: "Messages not fetched from database"
-            });
+            if (err) {
 
-            io.emit(EVENTS.SUCCESS.CHAT.FETCH, {
-                message: "Messages found in database",
-                chat: doc[0]
-            });
+                io.emit(EVENTS.ERROR.CHAT.FETCH, {
+                    message: "Messages not fetched from database"
+                });
 
+            // if a chat was found for the tracker
+            } else if (doc.length) {
+
+                // limit the amount of messages returned to 10
+                let messagesToReturn = doc[0].messages;
+                if (messagesToReturn.length > 10) {
+                    messagesToReturn = messagesToReturn.slice(doc.length - 11); // zero-indexed
+                }
+
+                // send messages found back to the client
+                io.emit(EVENTS.SUCCESS.CHAT.FETCH, {
+                    message: "Messages found in database",
+                    chatMessages: messagesToReturn
+                });
+            }
         });
     };
 };
