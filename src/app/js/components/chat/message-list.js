@@ -14,7 +14,8 @@ class ChatMessageList extends React.Component {
         super();
 
         this.state = {
-            messages: []
+            messages: [],
+            isChatShown: false
         };
 
         // bind methods
@@ -23,7 +24,7 @@ class ChatMessageList extends React.Component {
 
     render() {
         const { title } = this.props;
-        const { messages } = this.state;
+        const { messages, isChatShown } = this.state;
 
         return (
             <section>
@@ -33,24 +34,39 @@ class ChatMessageList extends React.Component {
                         { title }
                     </h2>
                 }
+                <button id="chat-toggle" aria-hidden="true">{ isChatShown ? 'Hide' : 'Show' } chat for activity</button>
                 {
-                    messages &&
+                    isChatShown && messages &&
                     messages.map((message, index) => {
                         return (
                             <ChatMessage message={ message } key={ index } />
                         )
                     })
                 }
-                <form onSubmit={ this.sendMessage } >
-                    <label htmlFor="chat-message">
-                        Send a message to the [name] chat
-                    </label>
-                    <textarea id="chat-message" name="chat-message"></textarea>
-                    <input type="submit" value="Send" />
-                </form>
+                {
+                    isChatShown &&
+                    <form onSubmit={ this.sendMessage } >
+                        <label htmlFor="chat-message">
+                            Send a message to the [name] chat
+                        </label>
+                        <textarea id="chat-message" name="chat-message"></textarea>
+                        <input type="submit" value="Send" />
+                    </form>
+                }
             </section>
         )
     }
+
+    componentDidMount() {
+        const { isChatShown } = this.state;
+        const chatToggle = document.getElementById('chat-toggle');
+
+        chatToggle.addEventListener('click', () => {
+            this.setState({
+                isChatShown: !this.state.isChatShown
+            });
+        });
+    };
 
     componentDidUpdate() {
 
