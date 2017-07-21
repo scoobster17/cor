@@ -25,43 +25,72 @@ class ListPage extends React.Component {
         return (
             <main>
                 <h1>Your scores</h1>
-                <p>Here is a list of all of the scoresheets you have tracked:</p>
-                <ul className="faux-table-headers" aria-hidden="true">
-                    <li>Name</li>
-                    <li>Activity</li>
-                    <li>Type</li>
-                    <li><span className="visually-hidden">Number of </span>players</li>
-                    <li>Wins</li>
-                    <li>Losses</li>
-                    <li>Draws</li>
-                </ul>
-                <ul className="tracker-list">
+                <section>
+                    <h2>Scores you created</h2>
+                    <p>
+                        {
+                            userTrackers.length > 0 ?
+                                'Here is a list of all of the scoresheets you have tracked:'
+                            :
+                                'You do not have any trackers currently.'
+                        }
+                    </p>
                     {
-                        userTrackers &&
-                        userTrackers.map((tracker, index) => {
-                            return (<TrackerSummary tracker={ tracker } key={ index } />);
-                        })
+                        userTrackers.length > 0 &&
+                        <ul className="faux-table-headers" aria-hidden="true">
+                            <li>Name</li>
+                            <li>Activity</li>
+                            <li>Type</li>
+                            <li><span className="visually-hidden">Number of </span>players</li>
+                            <li>Wins</li>
+                            <li>Losses</li>
+                            <li>Draws</li>
+                        </ul>
                     }
-                </ul>
-                <h2>Scores you are participating in</h2>
-                <p>Here is a list of scores that you are participating in, but do not own.</p>
-                <ul className="faux-table-headers" aria-hidden="true">
-                    <li>Name</li>
-                    <li>Activity</li>
-                    <li>Type</li>
-                    <li><span className="visually-hidden">Number of </span>players</li>
-                    <li>Wins</li>
-                    <li>Losses</li>
-                    <li>Draws</li>
-                </ul>
-                <ul className="tracker-list">
                     {
-                        participatingTrackers &&
-                        participatingTrackers.map((tracker, index) => {
-                            return (<TrackerSummary tracker={ tracker } key={ index } />);
-                        })
+                        userTrackers.length > 0 &&
+                        <ul className="tracker-list">
+                            {
+                                userTrackers.map((tracker, index) => {
+                                    return (<TrackerSummary tracker={ tracker } key={ index } />);
+                                })
+                            }
+                        </ul>
                     }
-                </ul>
+                </section>
+                <section>
+                    <h2>Scores you are participating in</h2>
+                    <p>
+                        {
+                            participatingTrackers.length > 0 ?
+                                'Here is a list of scores that you are participating in, but do not own.'
+                            :
+                                'You are not participating in any other trackers currently.'
+                        }
+                    </p>
+                    {
+                        participatingTrackers.length > 0 &&
+                        <ul className="faux-table-headers" aria-hidden="true">
+                            <li>Name</li>
+                            <li>Activity</li>
+                            <li>Type</li>
+                            <li><span className="visually-hidden">Number of </span>players</li>
+                            <li>Wins</li>
+                            <li>Losses</li>
+                            <li>Draws</li>
+                        </ul>
+                    }
+                    {
+                        participatingTrackers.length > 0 &&
+                        <ul className="tracker-list">
+                            {
+                                participatingTrackers.map((tracker, index) => {
+                                    return (<TrackerSummary tracker={ tracker } key={ index } />);
+                                })
+                            }
+                        </ul>
+                    }
+                </section>
             </main>
         )
     }
