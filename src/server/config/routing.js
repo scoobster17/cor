@@ -296,30 +296,6 @@ const setupAppRouting = (app, db, authenticator) => {
         });
 
     });
-
-    app.post('/data/scores/get', (req, res) => {
-
-        const scoreData = req.body;
-
-        // find trackers owned
-        db.scores().find({
-            "creator": scoreData.id
-        }).toArray((err, ownedTrackers) => {
-            // if (err) res.status(500); // 500?
-
-            // find trackers
-            db.scores().find({
-                "competitors": { "$in": [ scoreData.id ] }
-            }).toArray((err, trackersParticipatingIn) => {
-                // if (err) res.status(500); // 500?
-
-                res.status(200).send({
-                    owned: ownedTrackers,
-                    participating: trackersParticipatingIn
-                });
-            });
-        });
-    });
 }
 
 export default setupAppRouting;

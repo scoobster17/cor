@@ -18,7 +18,8 @@ const ioSetup = (io, db) => {
         // bind server functionality to socket events
         socket.on(EVENTS.CHAT.SEND, storeChatMessage);
         socket.on(EVENTS.CHAT.FETCH, getChatMessages);
-        socket.on(EVENTS.SCORES.FETCH, getTrackerDetails);
+        socket.on(EVENTS.SCORES.FETCH.SINGLE, getTrackerDetails);
+        socket.on(EVENTS.SCORES.FETCH.ALL, getTrackers);
 
     });
 
@@ -77,17 +78,50 @@ const ioSetup = (io, db) => {
             "urlText": data.urlText
         }).toArray((err, doc) => {
             if (err) {
-                io.emit(EVENTS.ERROR.SCORES.FETCH, {
+                io.emit(EVENTS.ERROR.SCORES.FETCH.SINGLE, {
                     message: "Tracker details not found in database"
                 });
             } else if (doc.length) {
-                io.emit(EVENTS.SUCCESS.SCORES.FETCH, {
+                io.emit(EVENTS.SUCCESS.SCORES.FETCH.SINGLE, {
                     message: "Tracker details found in database",
                     tracker: doc[0]
                 });
             }
         });
-    }
+    };
+
+    const getTrackers = (data) => {
+
+        // find trackers owned
+        db.scores().find({
+            "creator": data.id
+        }).toArray((err1, ownedTrackers) => {
+
+            if (err1) {
+                io.emit(EVENTS.ERROR.SCORES.FETCH.ALL, {
+                    message: "Users trackers not found in database"
+                });
+            }
+
+            // find trackers participating in
+            db.scores().find({
+                "competitors": { "$in": [ data.id ] }
+            }).toArray((err2, trackersParticipatingIn) => {
+
+                if (err2) {
+                    io.emit(EVENTS.ERROR.SCORES.FETCH.ALL, {
+                        message: "Trackers not owned not found in database"
+                    });
+                } else if (ownedTrackers.length || trackersParticipatingIn.length) {
+                    io.emit(EVENTS.SUCCESS.SCORES.FETCH.ALL, {
+                        message: "Trackers found in database",
+                        owned: ownedTrackers,
+                        participating: trackersParticipatingIn
+                    });
+                }
+            });
+        });
+    };
 };
 
 export default ioSetup;

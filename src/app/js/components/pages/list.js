@@ -5,6 +5,10 @@ import { Link } from 'react-router';
 // app dependencies
 import TrackerSummary from '../tracker/summary';
 
+// socket dependencies
+import socket, { createSocketConnection } from '../../config/socket/connection';
+import EVENTS from '../../config/socket/event-names';
+
 class ListPage extends React.Component {
 
     constructor() {
@@ -63,10 +67,12 @@ class ListPage extends React.Component {
     }
 
     componentWillReceiveProps() {
+        // fetch user's score trackers
         this.handleGetUserTrackers();
     }
 
     componentDidMount() {
+        // fetch user's score trackers
         this.handleGetUserTrackers();
     }
 
@@ -76,42 +82,27 @@ class ListPage extends React.Component {
 
         // fetch user's score trackers
         if (user) {
-            this.getUserTrackers(user).then((trackers) => {
-                this.setUserTrackers(JSON.parse(trackers));
-            });
+
+            // if the page has been rendered on the server side, we need to connect
+            // to the socket once the page has been rendered in the client
+            if (!socket) createSocketConnection();
+
+            socket.on(EVENTS.SUCCESS.SCORES.FETCH.ALL, this.setInitialUserTrackers.bind(this) );
+            this.getUserTrackers(user);
         }
     }
 
     // setup user's score trackers promise
     getUserTrackers(user) {
-        return new Promise((resolve, reject) => {
-            const request = new XMLHttpRequest();
-            request.open('POST', '/data/scores/get', true);
-            request.setRequestHeader("Content-Type", "application/json");
-            request.onload = () => {
-                if (request.status >= 200 && request.status < 300) {
-                    resolve(request.response);
-                } else {
-                    reject({
-                        status: request.status,
-                        statusText: request.statusText
-                    });
-                }
-            };
-            request.onerror = () => {
-                reject({
-                    status: request.status,
-                    statusText: request.statusText
-                });
-            };
-            request.send(JSON.stringify({ "id": user.id })); // should also search through competitor lists for trackers not owned
+        socket.emit(EVENTS.SCORES.FETCH.ALL, {
+            "id": user.id
         });
     }
 
-    setUserTrackers(trackers) {
+    setInitialUserTrackers(data) {
         this.setState({
-            userTrackers: trackers.owned,
-            participatingTrackers: trackers.participating
+            userTrackers: data.owned,
+            participatingTrackers: data.participating
         });
     }
 }

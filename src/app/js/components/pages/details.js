@@ -56,9 +56,9 @@ class DetailsPage extends React.Component {
         // to the socket once the page has been rendered in the client
         if (!socket) createSocketConnection();
 
-        // fetch user's score trackers
+        // fetch user's score tracker details
         this.getTracker();
-        socket.on(EVENTS.SUCCESS.SCORES.FETCH, this.setInitialTrackerDetails.bind(this) );
+        socket.on(EVENTS.SUCCESS.SCORES.FETCH.SINGLE, this.setInitialTrackerDetails.bind(this) );
 
     }
 
@@ -66,7 +66,7 @@ class DetailsPage extends React.Component {
     getTracker() {
         const trackerName = this.props.params.urlText;
 
-        socket.emit(EVENTS.SCORES.FETCH, {
+        socket.emit(EVENTS.SCORES.FETCH.SINGLE, {
             "id": "9e0945f0-87e1-4dda-a28e-047b4500b1d7",
             "urlText": trackerName
         });
