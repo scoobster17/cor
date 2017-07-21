@@ -50,24 +50,41 @@ class DetailsPage extends React.Component {
         )
     }
 
-    componentDidMount() {
-
-        // if the page has been rendered on the server side, we need to connect
-        // to the socket once the page has been rendered in the client
-        if (!socket) createSocketConnection();
-
+    componentWillReceiveProps() {
         // fetch user's score tracker details
-        this.getTracker();
-        socket.on(EVENTS.SUCCESS.SCORES.FETCH.SINGLE, this.setInitialTrackerDetails.bind(this) );
+        this.handleGetTrackerDetails();
+    }
 
+    componentDidMount() {
+        // fetch user's score tracker details
+        this.handleGetTrackerDetails();
+    }
+
+    handleGetTrackerDetails() {
+
+        const { user } = this.props;
+
+        // fetch user's score trackers
+        if (user) {
+
+            // if the page has been rendered on the server side, we need to connect
+            // to the socket once the page has been rendered in the client
+            if (!socket) createSocketConnection();
+
+            // fetch user's score tracker details
+            this.getTracker(user.id);
+            socket.on(EVENTS.SUCCESS.SCORES.FETCH.SINGLE, this.setInitialTrackerDetails.bind(this) );
+
+        }
     }
 
     // setup score tracker promise
-    getTracker() {
+    getTracker(userId) {
+
         const trackerName = this.props.params.urlText;
 
         socket.emit(EVENTS.SCORES.FETCH.SINGLE, {
-            "id": "9e0945f0-87e1-4dda-a28e-047b4500b1d7",
+            "id": userId,
             "urlText": trackerName
         });
 
