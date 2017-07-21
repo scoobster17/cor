@@ -16,25 +16,25 @@ const ioSetup = (io, db) => {
         socket.emit(EVENTS.CONNECTION.TEST, { message: 'You have received this from the server, your connection is running' });
 
         // bind server functionality to socket events
-        socket.on(EVENTS.CHAT.SEND, storeChatMessage);
-        socket.on(EVENTS.CHAT.FETCH, getChatMessages);
-        socket.on(EVENTS.SCORES.FETCH.SINGLE, getTrackerDetails);
-        socket.on(EVENTS.SCORES.FETCH.ALL, getTrackers);
+        socket.on(EVENTS.CHAT.SEND,           (data) => { storeChatMessage(  data, socket); });
+        socket.on(EVENTS.CHAT.FETCH,          (data) => { getChatMessages(   data, socket); });
+        socket.on(EVENTS.SCORES.FETCH.SINGLE, (data) => { getTrackerDetails( data, socket); });
+        socket.on(EVENTS.SCORES.FETCH.ALL,    (data) => { getTrackers(       data, socket); });
 
     });
 
 
     // socket.io callbacks
-    const storeChatMessage = (data) => {
+    const storeChatMessage = (data, socket) => {
 
         // update the chat with a new message
         db.chats().update({ id: data.chatId }, { $push: { messages: data.messageData } }, (err, saved) => {
 
-            if (err || !saved) io.emit(EVENTS.ERROR.CHAT.SEND, {
+            if (err || !saved) socket.emit(EVENTS.ERROR.CHAT.SEND, {
                 message: "Message not saved to database"
             });
 
-            io.emit(EVENTS.SUCCESS.CHAT.SEND, {
+            socket.emit(EVENTS.SUCCESS.CHAT.SEND, {
                 message: "Message saved to database",
                 messageData: data.messageData
             });
@@ -42,14 +42,14 @@ const ioSetup = (io, db) => {
         });
     };
 
-    const getChatMessages = (data) => {
+    const getChatMessages = (data, socket) => {
         db.chats().find({
             "id": data.chatId
         }).toArray((err, doc) => {
 
             if (err) {
 
-                io.emit(EVENTS.ERROR.CHAT.FETCH, {
+                socket.emit(EVENTS.ERROR.CHAT.FETCH, {
                     message: "Messages not fetched from database"
                 });
 
@@ -64,7 +64,7 @@ const ioSetup = (io, db) => {
                 }
 
                 // send messages found back to the client
-                io.emit(EVENTS.SUCCESS.CHAT.FETCH, {
+                socket.emit(EVENTS.SUCCESS.CHAT.FETCH, {
                     message: "Messages found in database",
                     chatMessages: messagesToReturn
                 });
@@ -72,17 +72,16 @@ const ioSetup = (io, db) => {
         });
     };
 
-    const getTrackerDetails = (data) => {
+    const getTrackerDetails = (data, socket) => {
         db.scores().find({
-            "creator": data.id,
             "urlText": data.urlText
         }).toArray((err, doc) => {
             if (err) {
-                io.emit(EVENTS.ERROR.SCORES.FETCH.SINGLE, {
+                socket.emit(EVENTS.ERROR.SCORES.FETCH.SINGLE, {
                     message: "Tracker details not found in database"
                 });
             } else if (doc.length) {
-                io.emit(EVENTS.SUCCESS.SCORES.FETCH.SINGLE, {
+                socket.emit(EVENTS.SUCCESS.SCORES.FETCH.SINGLE, {
                     message: "Tracker details found in database",
                     tracker: doc[0]
                 });
@@ -90,7 +89,7 @@ const ioSetup = (io, db) => {
         });
     };
 
-    const getTrackers = (data) => {
+    const getTrackers = (data, socket) => {
 
         // find trackers owned
         db.scores().find({
@@ -98,7 +97,7 @@ const ioSetup = (io, db) => {
         }).toArray((err1, ownedTrackers) => {
 
             if (err1) {
-                io.emit(EVENTS.ERROR.SCORES.FETCH.ALL, {
+                socket.emit(EVENTS.ERROR.SCORES.FETCH.ALL, {
                     message: "Users trackers not found in database"
                 });
             }
@@ -109,11 +108,11 @@ const ioSetup = (io, db) => {
             }).toArray((err2, trackersParticipatingIn) => {
 
                 if (err2) {
-                    io.emit(EVENTS.ERROR.SCORES.FETCH.ALL, {
+                    socket.emit(EVENTS.ERROR.SCORES.FETCH.ALL, {
                         message: "Trackers not owned not found in database"
                     });
                 } else if (ownedTrackers.length || trackersParticipatingIn.length) {
-                    io.emit(EVENTS.SUCCESS.SCORES.FETCH.ALL, {
+                    socket.emit(EVENTS.SUCCESS.SCORES.FETCH.ALL, {
                         message: "Trackers found in database",
                         owned: ownedTrackers,
                         participating: trackersParticipatingIn
