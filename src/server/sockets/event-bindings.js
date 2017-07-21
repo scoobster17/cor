@@ -6,14 +6,22 @@ const ioSetup = (io, db) => {
     // socket.io event bindings
     io.on('connection', (socket) => {
 
+        console.log('connection', socket.id);
+
+        socket.on('disconnect', () => {
+            console.log('disconnect', socket.id);
+        });
+
         // demonstrate to the user that there is a successful connection
         socket.emit(EVENTS.CONNECTION.TEST, { message: 'You have received this from the server, your connection is running' });
 
         // bind server functionality to socket events
         socket.on(EVENTS.CHAT.SEND, storeChatMessage);
         socket.on(EVENTS.CHAT.FETCH, getChatMessages);
+        socket.on(EVENTS.SCORES.FETCH, getTrackerDetails);
 
     });
+
 
     // socket.io callbacks
     const storeChatMessage = (data) => {
@@ -34,7 +42,6 @@ const ioSetup = (io, db) => {
     };
 
     const getChatMessages = (data) => {
-
         db.chats().find({
             "id": data.chatId
         }).toArray((err, doc) => {
@@ -48,8 +55,9 @@ const ioSetup = (io, db) => {
             // if a chat was found for the tracker
             } else if (doc.length) {
 
-                // limit the amount of messages returned to 10
                 let messagesToReturn = doc[0].messages;
+
+                // limit the amount of messages returned to 10
                 if (messagesToReturn.length > 10) {
                     messagesToReturn = messagesToReturn.slice(doc.length - 11); // zero-indexed
                 }
@@ -62,6 +70,24 @@ const ioSetup = (io, db) => {
             }
         });
     };
+
+    const getTrackerDetails = (data) => {
+        db.scores().find({
+            "creator": data.id,
+            "urlText": data.urlText
+        }).toArray((err, doc) => {
+            if (err) {
+                io.emit(EVENTS.ERROR.SCORES.FETCH, {
+                    message: "Tracker details not found in database"
+                });
+            } else if (doc.length) {
+                io.emit(EVENTS.SUCCESS.SCORES.FETCH, {
+                    message: "Tracker details found in database",
+                    tracker: doc[0]
+                });
+            }
+        });
+    }
 };
 
 export default ioSetup;

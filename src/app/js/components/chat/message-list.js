@@ -70,7 +70,6 @@ class ChatMessageList extends React.Component {
         // the database, fetch previous messages from the database
         if (!isChatShown && !chatHistoryFetched) {
 
-
             // fetch the history
             socket.emit(EVENTS.CHAT.FETCH, {
                 // "userId": "9e0945f0-87e1-4dda-a28e-047b4500b1d7" // TODO needs to be used for searching competitor chats too

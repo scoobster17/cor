@@ -5,6 +5,10 @@ import { Link } from 'react-router';
 // app dependencies
 import ChatMessageList from '../chat/message-list';
 
+// socket dependencies
+import socket, { createSocketConnection } from '../../config/socket/connection';
+import EVENTS from '../../config/socket/event-names';
+
 class DetailsPage extends React.Component {
 
     constructor() {
@@ -20,11 +24,11 @@ class DetailsPage extends React.Component {
         return (
             <div>
                 <main>
-                    <h1>Phil vs Jon M (Pool)</h1>
+                    <h1>{ tracker && tracker.name }</h1>
                     <p>Here are the details of your scorekeeping.</p>
                     <dl>
-                        <dt>Name</dt>
-                            <dd dangerouslySetInnerHTML={{ __html: tracker && tracker.name }}></dd>
+                        <dt className="visually-hidden">Name</dt>
+                            <dd className="visually-hidden" dangerouslySetInnerHTML={{ __html: tracker && tracker.name }}></dd>
                         <dt>Game / Activity</dt>
                             <dd dangerouslySetInnerHTML={{ __html: tracker && tracker.activity }}></dd>
                         <dt>Type</dt>
@@ -48,41 +52,29 @@ class DetailsPage extends React.Component {
 
     componentDidMount() {
 
+        // if the page has been rendered on the server side, we need to connect
+        // to the socket once the page has been rendered in the client
+        if (!socket) createSocketConnection();
+
         // fetch user's score trackers
-        this.getTracker().then((tracker) => {
-            this.setTracker(JSON.parse(tracker));
-        });
+        this.getTracker();
+        socket.on(EVENTS.SUCCESS.SCORES.FETCH, this.setInitialTrackerDetails.bind(this) );
 
     }
 
     // setup score tracker promise
     getTracker() {
         const trackerName = this.props.params.urlText;
-        return new Promise((resolve, reject) => {
-            const request = new XMLHttpRequest();
-            request.open('POST', '/data/scores/get', true);
-            request.setRequestHeader("Content-Type", "application/json");
-            request.onload = () => {
-                if (request.status >= 200 && request.status < 300) {
-                    resolve(request.response);
-                } else {
-                    reject({
-                        status: request.status,
-                        statusText: request.statusText
-                    });
-                }
-            };
-            request.onerror = () => {
-                reject({
-                    status: request.status,
-                    statusText: request.statusText
-                });
-            };
-            request.send(JSON.stringify({
-                "id": "9e0945f0-87e1-4dda-a28e-047b4500b1d7",
-                "urlText": trackerName
-            })); // needs to be dynamic, and also search through competitor lists for trackers not owned
+
+        socket.emit(EVENTS.SCORES.FETCH, {
+            "id": "9e0945f0-87e1-4dda-a28e-047b4500b1d7",
+            "urlText": trackerName
         });
+
+    }
+
+    setInitialTrackerDetails(data) {
+        this.setTracker(data.tracker);
     }
 
     setTracker(tracker) {

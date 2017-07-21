@@ -9,11 +9,17 @@ const EVENTS = {
         SEND: 'Sending Chat Message',
         RECEIVED: 'Chat Message Received'
     },
+    SCORES: {
+        FETCH: 'Fetching Score Tracker Details'
+    },
 
     ERROR: {
         CHAT: {
             FETCH: 'Error Fetching Chat Messages',
             SEND: 'Error Sending Chat Message'
+        },
+        SCORES: {
+            FETCH: 'Tracker details not found'
         }
     },
 
@@ -21,6 +27,9 @@ const EVENTS = {
         CHAT: {
             FETCH: 'Chat Messages Fetched Successfully',
             SEND: 'Message Saved',
+        },
+        SCORES: {
+            FETCH: 'Tracker details found'
         }
     }
 }

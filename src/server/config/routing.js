@@ -301,38 +301,24 @@ const setupAppRouting = (app, db, authenticator) => {
 
         const scoreData = req.body;
 
-        if (scoreData.urlText) {
-            db.scores().find({
-                "creator": scoreData.id,
-                "urlText": scoreData.urlText
-            }).toArray((err, doc) => {
-                if (err) res.status(500); // 500?
-                // need error handling here
-                if (doc.length) {
-                    res.status(200).send(doc[0]);
-                }
-            });
-        } else {
+        // find trackers owned
+        db.scores().find({
+            "creator": scoreData.id
+        }).toArray((err, ownedTrackers) => {
+            // if (err) res.status(500); // 500?
 
-            // find trackers owned
+            // find trackers
             db.scores().find({
-                "creator": scoreData.id
-            }).toArray((err, ownedTrackers) => {
+                "competitors": { "$in": [ scoreData.id ] }
+            }).toArray((err, trackersParticipatingIn) => {
                 // if (err) res.status(500); // 500?
 
-                // find trackers
-                db.scores().find({
-                    "competitors": { "$in": [ scoreData.id ] }
-                }).toArray((err, trackersParticipatingIn) => {
-                    // if (err) res.status(500); // 500?
-
-                    res.status(200).send({
-                        owned: ownedTrackers,
-                        participating: trackersParticipatingIn
-                    });
+                res.status(200).send({
+                    owned: ownedTrackers,
+                    participating: trackersParticipatingIn
                 });
             });
-        }
+        });
     });
 }
 
