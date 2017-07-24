@@ -96,7 +96,8 @@ class ChatMessageList extends React.Component {
 
     componentWillReceiveProps() {
 
-        socket.on(EVENTS.SUCCESS.CHAT.SEND, this.updateMessages.bind(this) );
+        // socket.on(EVENTS.SUCCESS.CHAT.SEND, this.showMessageSent.bind(this) );
+        socket.on(EVENTS.CHAT.NEW, this.updateMessages.bind(this) );
         socket.on(EVENTS.ERROR.CHAT.SEND, (data) => console.log(data) );
 
         socket.on(EVENTS.SUCCESS.CHAT.FETCH, this.setInitialMessages.bind(this) );
@@ -111,6 +112,7 @@ class ChatMessageList extends React.Component {
         const form = event.target;
 
         socket.emit(EVENTS.CHAT.SEND, {
+            trackerId: tracker.id,
             chatId: tracker.id,
             messageData: {
                 author: 'authorId',

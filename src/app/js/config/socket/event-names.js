@@ -4,7 +4,12 @@ const EVENTS = {
     CONNECTION: {
         TEST: 'Connection Check'
     },
+    ROOM: {
+        JOIN: 'Join room',
+        LEAVE: 'Leave room'
+    },
     CHAT: {
+        NEW: 'New Chat Message',
         FETCH: 'Fetching Latest Chat Messages',
         SEND: 'Sending Chat Message',
         RECEIVED: 'Chat Message Received'

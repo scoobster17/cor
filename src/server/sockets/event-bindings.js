@@ -20,6 +20,7 @@ const ioSetup = (io, db) => {
         socket.on(EVENTS.CHAT.FETCH,          (data) => { getChatMessages(   data, socket); });
         socket.on(EVENTS.SCORES.FETCH.SINGLE, (data) => { getTrackerDetails( data, socket); });
         socket.on(EVENTS.SCORES.FETCH.ALL,    (data) => { getTrackers(       data, socket); });
+        socket.on(EVENTS.ROOM.JOIN,           (data) => { joinRoom(          data, socket); });
 
     });
 
@@ -36,6 +37,11 @@ const ioSetup = (io, db) => {
 
             socket.emit(EVENTS.SUCCESS.CHAT.SEND, {
                 message: "Message saved to database",
+                messageData: data.messageData
+            });
+
+            io.in(`Tracker ${data.trackerId}`).emit(EVENTS.CHAT.NEW, {
+                message: "New message",
                 messageData: data.messageData
             });
 
@@ -120,6 +126,31 @@ const ioSetup = (io, db) => {
                 }
             });
         });
+    };
+
+    const joinRoom = (data, socket) => {
+
+        let roomName = '';
+
+        switch (true) {
+
+            // if we are joining a score tracker room
+            case data.hasOwnProperty('trackerId'):
+                roomName = `Tracker ${data.trackerId}`;
+                break;
+
+            default:
+                return; // don't join a room
+
+        }
+
+        // join the room
+        socket.join(roomName);
+
+        console.log('Joined room ', roomName);
+
+        // socket.emit(...success...)
+
     };
 };
 

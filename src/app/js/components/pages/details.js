@@ -58,19 +58,17 @@ class DetailsPage extends React.Component {
 
         // fetch user's score tracker details
         this.getTracker();
+
+        // bind event to receive the tracker details
         socket.on(EVENTS.SUCCESS.SCORES.FETCH.SINGLE, this.setInitialTrackerDetails.bind(this) );
 
     }
 
     // setup score tracker promise
-    getTracker(userId) {
-
-        const trackerName = this.props.params.urlText;
-
+    getTracker() {
         socket.emit(EVENTS.SCORES.FETCH.SINGLE, {
-            "urlText": trackerName
+            "urlText": this.props.params.urlText
         });
-
     }
 
     setInitialTrackerDetails(data) {
@@ -80,6 +78,12 @@ class DetailsPage extends React.Component {
 
     setTracker(tracker) {
         this.setState({ tracker });
+
+        // join a room specific to this score so chat for example can be emitted
+        // to all socket connections in this room
+        socket.emit(EVENTS.ROOM.JOIN, {
+            trackerId: tracker.id
+        });
     }
 
 }
