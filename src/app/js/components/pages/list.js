@@ -129,6 +129,7 @@ class ListPage extends React.Component {
     }
 
     setInitialUserTrackers(data) {
+        document.title = 'Your Scores | Cor scorekeeper app'; // TODO include custom detail e.g. name?
         this.setState({
             userTrackers: data.owned,
             participatingTrackers: data.participating

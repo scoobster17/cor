@@ -74,6 +74,7 @@ class DetailsPage extends React.Component {
     }
 
     setInitialTrackerDetails(data) {
+        document.title = 'Score Details Page | Cor scorekeeper app'; // TODO include custom detail e.g. name?
         this.setTracker(data.tracker);
     }
 

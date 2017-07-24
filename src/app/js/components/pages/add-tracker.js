@@ -154,6 +154,8 @@ class AddTrackerPage extends React.Component {
 
     componentDidMount() {
 
+        document.title = 'Add score tracker | Cor scorekeeper app'; // TODO include custom detail e.g. name?
+
         const addTrackerForm = document.getElementById('add-tracker-form');
 
         // handle add tracker submission

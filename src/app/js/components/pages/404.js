@@ -11,6 +11,10 @@ class NotFoundPage extends React.Component {
             </main>
         )
     }
+
+    componentDidMount() {
+        document.title = 'Page not found | Cor scorekeeper app'; // TODO include custom detail e.g. name?
+    }
 }
 
 export default NotFoundPage;
