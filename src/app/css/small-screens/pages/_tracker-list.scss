@@ -1,7 +1,7 @@
 .faux-table-headers {
     overflow:hidden;
     li {
-        background-color: $secondaryBackgroundColour; // to change
+        background-color: $secondaryDarkBackgroundColour;
         box-sizing: border-box;
         float:left;
         @include font-size(2);

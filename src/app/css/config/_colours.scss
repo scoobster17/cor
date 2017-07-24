@@ -1,19 +1,42 @@
-// defining shades of 'real colours'
-$white:                     #FFFFFF;
-$black:                     #000000;
+
+/******************************************************************************/
+// COLOURS
+/******************************************************************************/
+
+// Defining shades of 'real colours'
+// THESE COLOUR VARIABLES SHOULD NOT BE USED ANYWHERE OTHER THAN THIS FILE
+$white:                             #FFFFFF;
+$black:                             #000000;
+$red:                               #d01010;
+$red-dark:                          #ae0000;
+$grey-dark:                         #353535;
+$grey-light:                        #e4e4e4;
+
+/******************************************************************************/
+// ASSIGNING THE VARIABLES ABOVE TO PARTS OF THE SITE
+/******************************************************************************/
 
 // Chosen Colours
-$primaryColour:             $black;
-$secondaryColour:           #ccc; // to be revised
-$primaryBackgroundColour:   $white;
-$secondaryBackgroundColour: #ccc;
+$primaryColour:                     $red;
+$secondaryColour:                   $grey-dark;
 
-// Brand Colours
-$facebookColour:            #3B5998;
-$twitterColour:             #4099FF;
-$pinterestColour:           #C92228;
+// Background Colours
+$primaryLightBackgroundColour:      $white;
+$secondaryLightBackgroundColour:    $grey-light;
+$primaryDarkBackgroundColour:       $red;
+$secondaryDarkBackgroundColour:     $grey-dark;
+$primaryDarkHoverBackgroundColour:  $red-dark;
 
-// Text colours
-$primaryTextColour:         $primaryColour;
-$secondaryTextColour:       $white;
-$tertiaryTextColour:        red; // to be revised
+// Text Colours
+$primaryTextColour:                 $grey-dark;
+$secondaryTextColour:               $red;
+$primaryLightTextColour:            $white;
+
+/******************************************************************************/
+// MISCELLANEOUS
+/******************************************************************************/
+
+// Social Media Brand Colours
+$facebookColour:                    #3B5998;
+$twitterColour:                     #4099FF;
+$pinterestColour:                   #C92228;

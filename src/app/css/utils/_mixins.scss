@@ -2,3 +2,8 @@
 	font-size: #{$size}em;
 	font-size: #{$size}rem;
 }
+
+@mixin heading-letter-spacing {
+    letter-spacing: .1rem;
+    letter-spacing: .04em;
+}

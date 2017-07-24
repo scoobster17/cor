@@ -1,0 +1,32 @@
+.login-page {
+    h1,
+    h2,
+    p {
+        padding-left:25px;
+        padding-right:25px;
+    }
+}
+.sign-in,
+.register {
+    box-sizing: border-box;
+    padding: 25px;
+    h3 {
+        background-color:$secondaryDarkBackgroundColour;
+        color:$primaryLightTextColour;
+        @include font-size(2.5);
+        @include heading-letter-spacing;
+        margin:0;
+        padding:15px 25px 15px;
+        text-align: center;
+    }
+    p {
+        background-color:$secondaryLightBackgroundColour;
+        margin:0;
+        max-width:none;
+        padding: 25px 25px 0;
+    }
+    form {
+        background-color:$secondaryLightBackgroundColour;
+        padding:25px;
+    }
+}

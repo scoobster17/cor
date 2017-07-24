@@ -1,0 +1,29 @@
+fieldset {
+    border:none;
+    margin:0;
+    padding:0;
+    + fieldset {
+        border-top:1px solid $primaryColour;
+        margin-top:32px;
+        padding-top:25px;
+    }
+}
+label {
+    display:block;
+    font-family: $primaryFontStack;
+    @include font-size(1.6);
+}
+input {
+    border:1px solid $secondaryColour;
+    box-shadow:none;
+    box-sizing: border-box;
+    display:block;
+    // font-family: $primaryFontStack; // temp removed for readability for lowercase. Review font choices?
+    @include font-size(1.6);
+    letter-spacing:.15rem;
+    padding:10px;
+    width:100%;
+    + label {
+        margin-top:25px;
+    }
+}

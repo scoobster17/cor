@@ -1,0 +1,10 @@
+.global-footer {
+    background-color: $primaryDarkBackgroundColour;
+    color: $primaryLightTextColour;
+    padding:25px;
+    text-align:center;
+    p {
+        margin-left:auto;
+        margin-right:auto;
+    }
+}

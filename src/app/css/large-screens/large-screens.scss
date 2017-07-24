@@ -4,8 +4,9 @@
 // utilities
 @import "../utils/_sass-setup";
 
-// reset - do not need, included in mobile css
-// @import "~reset-css/_reset"; // ~ tells webpack to look in node_modules/
+// framework (PURE CSS) - do not need, included in mobile css
+// @import "~purecss/build/base.css"; // reset
+// @import "~purecss/build/grids.css"; // grid
 
 // configuration - do not need, included in mobile css
 // @import "../config/_fonts";

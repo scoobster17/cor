@@ -4,8 +4,10 @@
 // utilities
 @import "../utils/_sass-setup";
 
-// reset
-@import "~reset-css/_reset"; // ~ tells webpack to look in node_modules/
+// framework (PURE CSS)
+@import "~purecss/build/base.css"; // reset
+@import "~purecss/build/grids.css"; // grid base
+@import "~purecss/build/grids-responsive.css"; // grid breakpoints
 
 // configuration
 @import "../config/_fonts";
@@ -16,8 +18,13 @@
 
 // components
 @import "components/global/_header";
+@import "components/global/_footer";
+@import "components/global/_lists";
+@import "components/global/_forms";
+@import "components/global/_buttons";
 
 // pages
-@import "pages/_home";
+@import "pages/_login";
+@import "pages/_list";
 @import "pages/_add-tracker";
 @import "pages/_tracker-list";

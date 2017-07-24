@@ -1,0 +1,15 @@
+.button {
+    background-color: $primaryColour;
+    border:none;
+    color: $primaryLightTextColour;
+    @include font-size(1.6);
+    font-family: $primaryFontStack;
+    margin:25px auto 0;
+    max-width:20em; // desktop to be revised
+    padding:10px 25px;
+    width:100%;
+    &:hover,
+    &:focus {
+        background-color: $primaryDarkHoverBackgroundColour;
+    }
+}
