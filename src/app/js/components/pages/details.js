@@ -22,7 +22,7 @@ class DetailsPage extends React.Component {
     render() {
         const { tracker } = this.state;
         return (
-            <div>
+            <div id="details-page" className="details-page">
                 <main>
                     <h1>{ tracker && tracker.name }</h1>
                     <p>Here are the details of your scorekeeping.</p>

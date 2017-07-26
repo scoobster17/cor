@@ -9,6 +9,7 @@ body {
 }
 main {
 	background-color: $primaryLightBackgroundColour;
+	min-height: 78vh; // to check, desktop only?
 	padding:3rem 25px;
 }
 section {
@@ -46,6 +47,13 @@ a {
 	&:active {
 		text-decoration: none;
 	}
+}
+dl {
+	-webkit-margin-after:0;
+	-webkit-margin-before:0;
+}
+dd {
+	-webkit-margin-start:0;
 }
 .visually-hidden {
 	border: 0;

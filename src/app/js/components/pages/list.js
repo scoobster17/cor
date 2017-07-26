@@ -37,7 +37,7 @@ class ListPage extends React.Component {
                     </p>
                     {
                         userTrackers.length > 0 &&
-                        <ul className="faux-table-headers" aria-hidden="true">
+                        <ul className="faux-table-headers list-unstyled" aria-hidden="true">
                             <li>Name</li>
                             <li>Activity</li>
                             <li>Type</li>
@@ -49,7 +49,7 @@ class ListPage extends React.Component {
                     }
                     {
                         userTrackers.length > 0 &&
-                        <ul className="tracker-list">
+                        <ul className="tracker-list list-unstyled">
                             {
                                 userTrackers.map((tracker, index) => {
                                     return (<TrackerSummary tracker={ tracker } key={ index } />);
@@ -70,7 +70,7 @@ class ListPage extends React.Component {
                     </p>
                     {
                         participatingTrackers.length > 0 &&
-                        <ul className="faux-table-headers" aria-hidden="true">
+                        <ul className="faux-table-headers list-unstyled" aria-hidden="true">
                             <li>Name</li>
                             <li>Activity</li>
                             <li>Type</li>
@@ -82,7 +82,7 @@ class ListPage extends React.Component {
                     }
                     {
                         participatingTrackers.length > 0 &&
-                        <ul className="tracker-list">
+                        <ul className="tracker-list list-unstyled">
                             {
                                 participatingTrackers.map((tracker, index) => {
                                     return (<TrackerSummary tracker={ tracker } key={ index } />);

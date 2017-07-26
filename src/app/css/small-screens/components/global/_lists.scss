@@ -1,5 +1,6 @@
 .list-unstyled {
     -webkit-padding-start:0;
+    margin: 0;
     li {
         list-style: none;
     }
@@ -7,4 +8,10 @@
 
 .list-embedded {
     margin:0;
+}
+
+.list-inline {
+    li {
+        display:inline-block;
+    }
 }

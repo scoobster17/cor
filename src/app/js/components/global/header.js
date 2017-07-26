@@ -7,14 +7,14 @@ class GlobalHeader extends React.Component {
         return (
             <header className="global-header">
                 <nav>
-                    <ul>
+                    <ul className="site-home list-unstyled">
                         <li>
                             <Link to="/scores">
                                 Cor scorekeeper app
                             </Link>
                         </li>
                     </ul>
-                    <ul className="global-nav">
+                    <ul className="global-nav list-unstyled list-inline">
                         <li>
                             <Link to="/scores">
                                 My scores
@@ -26,7 +26,7 @@ class GlobalHeader extends React.Component {
                             </Link>
                         </li>
                     </ul>
-                    <ul>
+                    <ul className="secondary-nav list-unstyled list-inline">
                         <li>
                             <a href="/log-out">
                                 Log out

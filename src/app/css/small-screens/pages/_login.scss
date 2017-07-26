@@ -1,4 +1,9 @@
 .login-page {
+    > section {
+        margin-left:auto; // all desktop only
+        margin-right:auto;
+        max-width:980px;
+    }
     h1,
     h2,
     p {

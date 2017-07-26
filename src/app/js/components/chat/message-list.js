@@ -5,8 +5,13 @@ import React from 'react';
 import socket from '../../config/socket/connection';
 import EVENTS from '../../config/socket/event-names';
 
+// utility dependencies
+import { toggleClass } from '../../../../../node_modules/joose-utils/src/joose-utils.js';
+
 // app dependencies
 import ChatMessage from './message';
+
+let pageContainer;
 
 class ChatMessageList extends React.Component {
 
@@ -61,6 +66,10 @@ class ChatMessageList extends React.Component {
         )
     }
 
+    componentDidMount() {
+        pageContainer = document.getElementById('details-page');
+    }
+
     handleToggleChat() {
 
         const { tracker } = this.props;
@@ -84,9 +93,14 @@ class ChatMessageList extends React.Component {
     };
 
     toggleChatVisibility() {
+
         this.setState({
             isChatShown: !this.state.isChatShown
         });
+
+        // we also want to change styling based on chat being shown outside the
+        // scope of this component
+        toggleClass(pageContainer, 'chat-shown');
     }
 
     setChatMessages(messages) {

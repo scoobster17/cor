@@ -1,0 +1,18 @@
+.details-page {
+    overflow: hidden;
+    &.chat-shown {
+        main {
+            width: calc(72% - 50px); // to review / make draggable
+        }
+    }
+    main {
+        float:left;
+        width:100%;
+    }
+    aside {
+        float:right;
+        min-height:78vh; // to match main, to be reviewed
+        padding: 25px; // to match main
+        width: calc(28% - 50px); // to review
+    }
+}
