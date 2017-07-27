@@ -24,7 +24,7 @@ class AddTrackerPage extends React.Component {
         const { user } = this.props;
         const { selectedTrackerType, competitorSearchResults, competitors } = this.state.form;
         return (
-            <main>
+            <main className="add-tracker-page">
                 <form id="add-tracker-form">
                     <h1>Add a score tracker</h1>
                     <p>Create a tracking sheet for your scores here.</p>
@@ -32,28 +32,34 @@ class AddTrackerPage extends React.Component {
                         <input type="hidden" name="creator" value={ user && user.id } />
                     </fieldset>
                     <fieldset>
-                        <h2>Tracker details</h2>
-                        <label htmlFor="name">Tracker name:</label>
-                        <input type="text" id="name" name="name" placeholder="Work pool scores" />
-                        <label htmlFor="activity">Activity:</label>
-                        <input type="text" id="activity" name="activity" placeholder="Pool" />
-                        <fieldset>
-                            <span>Tracker type:</span>
-                            <label htmlFor="people">People</label>
-                            <input type="radio" name="type" id="people" value="people" checked={ this.state.form.selectedTrackerType === 'people' } onChange={ this.handleTrackerTypeChange } />
-                            <label htmlFor="team">Team</label>
-                            <input type="radio" name="type" id="team" value="team" checked={ this.state.form.selectedTrackerType === 'team' } onChange={ this.handleTrackerTypeChange } />
+                        <div className="pure-u-1-2">
+                            <h2>Tracker details</h2>
+                            <label htmlFor="name">Tracker name:</label>
+                            <input type="text" id="name" name="name" placeholder="Work pool scores" />
+                            <label htmlFor="activity">Activity:</label>
+                            <input type="text" id="activity" name="activity" placeholder="Pool" />
+                        </div>
+                        <fieldset className="pure-u-1-2">
+                            <span className="h2">Tracker type:</span>
+                            <div className="radio-field">
+                                <label htmlFor="people">People</label>
+                                <input type="radio" name="type" id="people" value="people" checked={ this.state.form.selectedTrackerType === 'people' } onChange={ this.handleTrackerTypeChange } />
+                            </div>
+                            <div className="radio-field">
+                                <label htmlFor="team">Team</label>
+                                <input type="radio" name="type" id="team" value="team" checked={ this.state.form.selectedTrackerType === 'team' } onChange={ this.handleTrackerTypeChange } />
+                            </div>
                             <fieldset hidden={ selectedTrackerType !== 'people' }>
                                 <h3>Competitor Search</h3>
-                                <label htmlFor="competitors">Search for competitors<span className="visually-hidden"> by email address</span>:</label>
+                                <label htmlFor="competitorSearch">Search for competitors<span className="visually-hidden"> by email address</span>:</label>
                                 <input type="text" id="competitorSearch" placeholder="Enter email address" />
-                                <button id="competitorSearchSubmit">Search<span className="visually-hidden"> for competitor</span></button>
+                                <button id="competitorSearchSubmit" className="button">Search<span className="visually-hidden"> for competitors</span></button>
                                 {
                                     competitorSearchResults &&
-                                    <ul>
+                                    <ul className="list-unstyled">
                                         {
                                             competitorSearchResults.map((person, index) => {
-                                                return <li key={ index }>
+                                                return <li key={ index } className="checkbox-field">
                                                     <label htmlFor={ 'person-' + person.id }>{ person.username }</label>
                                                     <input type="checkbox" id={ 'person-' + person.id } value={ person.id } checked={ this.isCompetitor(person.id) } onChange={ this.changeCompetitors } />
                                                 </li>;
@@ -63,11 +69,15 @@ class AddTrackerPage extends React.Component {
                                 }
                                 <h3>Selected Competitors</h3>
                                 {
-                                    competitors &&
-                                    <ul>
+                                    !competitors.length &&
+                                    <p>You have no competitors. Use the form above to search for people to score against!</p>
+                                }
+                                {
+                                    competitors.length > 0 &&
+                                    <ul className="list-unstyled">
                                         {
                                             competitors.map((competitor, index) => {
-                                                return <li key={ index }>
+                                                return <li key={ index } className="checkbox-field">
                                                     <label htmlFor={ 'competitors-' + competitor.id }>
                                                         { competitor['first-name'] + ' ' + competitor['last-name'] + ' (' + competitor.username + ')' }
                                                     </label>
@@ -76,6 +86,14 @@ class AddTrackerPage extends React.Component {
                                             })
                                         }
                                     </ul>
+                                }
+                                {
+                                    competitors.length > 0 &&
+                                    <div>
+                                        <p>Search again to select more competitors.</p>
+                                        <p>Don't worry, any competitors you have selected will stay in this list when you perform a new search.</p>
+                                        <p>To remove a competitor, simply uncheck the box next to them. You can always search for them again if you do it by accident!</p>
+                                    </div>
                                 }
                             </fieldset>
                             {
@@ -91,7 +109,7 @@ class AddTrackerPage extends React.Component {
                             </fieldset>
                         </fieldset>
                     </fieldset>
-                    <input type="submit" value="Add score tracker" />
+                    <input className="button" type="submit" value="Add score tracker" />
                 </form>
             </main>
         )

@@ -1,0 +1,35 @@
+.add-tracker-page {
+    h1 {
+        margin-left:25px;
+        margin-right:25px;
+    }
+    form {
+        margin-left:auto; // all desktop only - shared
+        margin-right:auto;
+        max-width:980px;
+        > p {
+            margin-left:25px;
+            margin-right:25px;
+        }
+    }
+    fieldset {
+        + fieldset {
+            border-top: none;
+            margin-top:0;
+            padding-top:0;
+        }
+    }
+    .pure-u-1-2 {
+        box-sizing: border-box;
+        padding: 25px;
+    }
+    button {
+        + ul {
+            margin-top:25px;
+        }
+    }
+    input[type="submit"] {
+        margin-left:auto;
+        margin-right:auto;
+    }
+}

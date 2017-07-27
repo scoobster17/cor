@@ -9,7 +9,7 @@ fieldset {
     }
 }
 label {
-    display:block;
+    display:inline-block;
     font-family: $primaryFontStack;
     @include font-size(1.6);
 }
@@ -25,5 +25,19 @@ input {
     width:100%;
     + label {
         margin-top:25px;
+    }
+}
+.checkbox-field,
+.radio-field {
+    margin: 0 0 10px;
+    position: relative;
+    label {
+        padding-left: 25px;
+    }
+    input {
+        left:0;
+        position:absolute;
+        top:1px;
+        width:auto;
     }
 }
