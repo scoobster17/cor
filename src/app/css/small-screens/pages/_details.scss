@@ -1,8 +1,22 @@
 .details-page {
     overflow: hidden;
+    position: relative;
     &.chat-shown {
         main {
             width: calc(72% - 50px); // to review / make draggable
+        }
+        aside {
+            min-height:78vh; // to match main, to be reviewed
+            position:static;
+            width: calc(28% - 52px); // to review, 50px padding with 2px "border"
+            section {
+                height:78vh; // to check
+            }
+            button {
+                position:absolute;
+                right:-15px;
+                top:-2rem;
+            }
         }
     }
     main {
@@ -10,9 +24,19 @@
         width:100%;
     }
     aside {
-        float:right;
-        min-height:78vh; // to match main, to be reviewed
-        padding: 25px; // to match main
-        width: calc(28% - 50px); // to review
+        background-color: $primaryLightBackgroundColour;
+        bottom:0;
+        float:right; // for when absolute positioning removed
+        padding: 3rem 25px; // to match main
+        position: absolute;
+        right:0;
+        section {
+            // allow bottom padding for form
+            position: relative;
+        }
+        form {
+            bottom:0;
+            position: absolute;
+        }
     }
 }
