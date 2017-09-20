@@ -11,18 +11,100 @@ class AddTrackerPage extends React.Component {
             form: {
                 selectedTrackerType: 'people',
                 competitorSearchResults: [],
-                competitors: []
+                competitors: [],
+                statistics: [
+                    {
+                        'sort': 0,
+                        'label': 'Wins',
+                        'name': 'wins',
+                        'default': true
+                    },
+                    {
+                        'sort': 1,
+                        'label': 'Losses',
+                        'name': 'losses',
+                        'default': true
+                    },
+                    {
+                        'sort': 2,
+                        'label': 'Draws',
+                        'name': 'draws',
+                        'default': false
+                    },
+                    {
+                        'sort': 3,
+                        'label': 'Games played',
+                        'name': 'played',
+                        'default': true
+                    },
+                    {
+                        'sort': 4,
+                        'label': 'Win Percentage',
+                        'name': 'win-percentage',
+                        'default': true
+                    },
+                    {
+                        'sort': 5,
+                        'label': 'Games Behind',
+                        'name': 'games-behind',
+                        'default': false
+                    },
+                    {
+                        'sort': 6,
+                        'label': 'Home games',
+                        'name': 'home-games',
+                        'default': false
+                    },
+                    {
+                        'sort':7,
+                        'label': 'Away games',
+                        'name': 'away-games',
+                        'default': false
+                    },
+                    {
+                        'sort':8,
+                        'label': 'Points per game',
+                        'name': 'points-per-game',
+                        'default': false
+                    },
+                    {
+                        'sort':9,
+                        'label': 'Opponent points per game',
+                        'name': 'opponent-points-per-game',
+                        'default': false
+                    },
+                    {
+                        'sort':10,
+                        'label': 'Current Win Streak',
+                        'name': 'win-streak',
+                        'default': true
+                    },
+                    {
+                        'sort':11,
+                        'label': 'Current Loss Streak',
+                        'name': 'loss-streak',
+                        'default': false
+                    },
+                    {
+                        'sort':12,
+                        'label': 'Last 10 game results (Win-Loss)',
+                        'name': 'last-ten-results',
+                        'default': false
+                    }
+                ],
+                selectedStatistics: []
             }
         };
 
         this.handleTrackerTypeChange = this.handleTrackerTypeChange.bind(this);
         this.changeCompetitors = this.changeCompetitors.bind(this);
         this.isCompetitor = this.isCompetitor.bind(this);
+        this.changeStatistics = this.changeStatistics.bind(this);
     }
 
     render() {
         const { user } = this.props;
-        const { selectedTrackerType, competitorSearchResults, competitors } = this.state.form;
+        const { statistics, selectedTrackerType, competitorSearchResults, competitors } = this.state.form;
         return (
             <main className="add-tracker-page">
                 <form id="add-tracker-form">
@@ -38,6 +120,19 @@ class AddTrackerPage extends React.Component {
                             <input type="text" id="name" name="name" placeholder="Work pool scores" />
                             <label htmlFor="activity">Activity:</label>
                             <input type="text" id="activity" name="activity" placeholder="Pool" />
+                            <h3>Statistics<span className="visually-hidden"> to be tracked</span></h3>
+                            <ul className="list-unstyled">
+                                {
+                                    statistics.map((statistic, index) => {
+                                        return <li key={ index } className="checkbox-field">
+                                            <label htmlFor={ 'competitors-' + statistic.name }>
+                                                { statistic['label'] }
+                                            </label>
+                                            <input type="checkbox" name="statistics" id={ statistic.name } data-sort={ statistic.sort } value={ statistic.name } checked={ this.isSelectedStatistic(statistic.sort) } onChange={ this.changeStatistics } />
+                                        </li>;
+                                    })
+                                }
+                            </ul>
                         </div>
                         <fieldset className="pure-u-1-2">
                             <span className="h2">Tracker type:</span>
@@ -154,6 +249,35 @@ class AddTrackerPage extends React.Component {
                 competitors
             }
         });
+    }
+
+    changeStatistics(event) {
+
+        const index = event.target.getAttribute('data-sort');
+        const statistics = this.state.form.statistics;
+
+        // store in the state whether checked or not
+        this.setState({
+            form: {
+                ...this.state.form,
+                statistics: [
+                    ...statistics.slice(0, index),
+                    {
+                        ...statistics[index],
+                        checked: !(!!statistics[index].checked)
+                    },
+                    ...statistics.slice(parseInt(index) + 1)
+                ]
+            }
+        })
+    }
+
+    isSelectedStatistic(index) {
+        const { selectedStatistics } = this.state.form;
+        const match = selectedStatistics.filter((statistic) => {
+            return statistic.sort === index;
+        });
+        return match.length;
     }
 
     isCompetitor(id) {
